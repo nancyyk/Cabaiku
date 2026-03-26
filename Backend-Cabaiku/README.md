@@ -1,0 +1,11 @@
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+
+---
+format: date:information progres
+
+* 26-03-2026
+  * membuat [tabel relasi](/AssetDokumentasi/tabel_cabaiku.png)
+  * membuat tabel_migrations users, farms, detections
+  * membuat seeder users, farms, detctions
+
+
