@@ -7,5 +7,6 @@ format: date:information progres
   * membuat [tabel relasi](/AssetDokumentasi/tabel_cabaiku.png)
   * membuat tabel_migrations users, farms, detections
   * membuat seeder users, farms, detctions
-
+* 28-03-2026
+  * membuat api login, register, logout 
 
