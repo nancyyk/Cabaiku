@@ -4,11 +4,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use PHPUnit\Framework\Attributes\Group;
+use App\Http\Controllers\FarmController;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
-|--------------------------------------------------------------------------
+|-----------------------------------------------------------------  ---------
 |
 | Here is where you can register API routes for your application. These
 | routes are loaded by the RouteServiceProvider and all of them will
@@ -25,5 +26,11 @@ Route::prefix('v1')->group(function(){
     Route::post('/login', [AuthController::class, 'Login']);
     Route::middleware('auth:sanctum')->group(function(){
         Route::post('/logout', [AuthController::class, 'Logout']);
+    });
+    Route::middleware('auth:sanctum')->group(function(){
+        Route::get('/user', [AuthController::class, 'User']);
+    });
+    Route::middleware('auth:sanctum')->group(function(){
+        Route::apiResource('farms',FarmController::class);
     });
 });

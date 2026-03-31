@@ -14,16 +14,16 @@ class FarmsSeeder extends Seeder
     public function run(): void
     {
         DB::table('farms')->insert([
-            ['id' => "1",
-            'user_id' => "1",
+            ['id' => "3",
+            'user_id' => "6",
             'nama_lahan' => "lahan 1",
-            'lokasi_lahan' => "Lokasi Farm 1",
+            'lokasi_lahan' => "Lokasi Farm 1 di lahan megatan",
             'luas_lahan' => "1000",],
             [
-            'id' => "2",
-            'user_id' => "1",
+            'id' => "4",
+            'user_id' => "6",
             'nama_lahan' => "lahan 2",
-            'lokasi_lahan' => "Lokasi belang rumah",
+            'lokasi_lahan' => "Lokasi belang rumah nenek",
             'luas_lahan' => "1000",
             ]
         ]);

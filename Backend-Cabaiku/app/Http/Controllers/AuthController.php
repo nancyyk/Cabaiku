@@ -5,6 +5,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -81,7 +82,7 @@ class AuthController extends Controller
     // Logout user
     public function Logout(){
         try {
-            auth()->user()->tokens()->delete();
+            Auth::user()->tokens()->delete();
             return response()->json([
                 'status' => 'success',
                 'message' => 'user logged out successfully'
@@ -92,6 +93,24 @@ class AuthController extends Controller
                 'message' => 'failed to logout user',
                 'error' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    // Get user data
+    public function User(){
+        try {
+            $user = Auth::user();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'user data retrieved successfully',
+                'data' => $user
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'token invalid or expired',
+                'error' => $e->getMessage()
+            ], 590);
         }
     }
 }

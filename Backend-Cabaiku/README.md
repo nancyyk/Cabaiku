@@ -9,4 +9,7 @@ format: date:information progres
   * membuat seeder users, farms, detctions
 * 28-03-2026
   * membuat api login, register, logout 
-
+* 29-03-2026
+  * membuat get api(user) untuk mendapatkan informasi dasar user
+* 31-0-2026
+  * membuat index api farms get by user id
