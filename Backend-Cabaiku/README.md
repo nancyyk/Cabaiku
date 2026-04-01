@@ -11,5 +11,8 @@ format: date:information progres
   * membuat api login, register, logout 
 * 29-03-2026
   * membuat get api(user) untuk mendapatkan informasi dasar user
-* 31-0-2026
+* 31-03-2026
   * membuat index api farms get by user id
+* 01-04-2026
+  * membuat api unutk lahan(farms) update delete
+  * membuat model & controller dari detections
