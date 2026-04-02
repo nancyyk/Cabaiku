@@ -16,3 +16,6 @@ format: date:information progres
 * 01-04-2026
   * membuat api unutk lahan(farms) update delete
   * membuat model & controller dari detections
+* 02-04-2026
+  * membuat api detections 
+  

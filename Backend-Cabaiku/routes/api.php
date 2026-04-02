@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use PHPUnit\Framework\Attributes\Group;
 use App\Http\Controllers\FarmController;
+use App\Http\Controllers\DetectionsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,5 +33,9 @@ Route::prefix('v1')->group(function(){
     });
     Route::middleware('auth:sanctum')->group(function(){
         Route::apiResource('farms',FarmController::class);
+    });
+
+    Route::middleware('auth:sanctum')->group(function(){
+        Route::apiResource('detections',DetectionsController::class)->except(['update', 'destroy']);
     });
 });
