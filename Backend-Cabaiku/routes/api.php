@@ -1,41 +1,27 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use PHPUnit\Framework\Attributes\Group;
-use App\Http\Controllers\FarmController;
-use App\Http\Controllers\DetectionsController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ArtikelController;
+use App\Http\Controllers\Api\DeteksiController;
+use App\Http\Controllers\Api\LahanController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|-----------------------------------------------------------------  ---------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+Route::get('/artikels', [ArtikelController::class, 'index']);
+Route::get('/artikels/{artikel}', [ArtikelController::class, 'show']);
 
-Route::prefix('v1')->group(function(){
-    Route::post('/register', [AuthController::class, 'regiter']);
-    Route::post('/login', [AuthController::class, 'Login']);
-    Route::middleware('auth:sanctum')->group(function(){
-        Route::post('/logout', [AuthController::class, 'Logout']);
-    });
-    Route::middleware('auth:sanctum')->group(function(){
-        Route::get('/user', [AuthController::class, 'User']);
-    });
-    Route::middleware('auth:sanctum')->group(function(){
-        Route::apiResource('farms',FarmController::class);
-    });
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/me', [AuthController::class, 'me']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/logout-all', [AuthController::class, 'logoutAll']);
 
-    Route::middleware('auth:sanctum')->group(function(){
-        Route::apiResource('detections',DetectionsController::class)->except(['update', 'destroy']);
-    });
+    Route::apiResource('lahans', LahanController::class);
+    Route::apiResource('deteksis', DeteksiController::class);
+
+    Route::post('/artikels', [ArtikelController::class, 'store']);
+    Route::put('/artikels/{artikel}', [ArtikelController::class, 'update']);
+    Route::patch('/artikels/{artikel}', [ArtikelController::class, 'update']);
+    Route::delete('/artikels/{artikel}', [ArtikelController::class, 'destroy']);
 });

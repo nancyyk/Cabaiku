@@ -1,116 +1,80 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\User;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
-    // Register user
-    public function regiter(Request $request){
-        $validator = Validator::make($request->all(),[
-            'nama' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:4',
-            'no_wa' => 'required',
-            'lokasi' => 'required',
+    public function showLogin()
+    {
+        return view('auth.login');
+    }
+
+    public function showRegister()
+    {
+        return view('auth.register');
+    }
+
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required',
+        ], [
+            'email.required'    => 'Email wajib diisi',
+            'email.email'       => 'Format email tidak valid',
+            'password.required' => 'Password wajib diisi',
         ]);
 
-        if($validator->fails()){
-            return response()->json([
-                'status' => 'error',
-                'message' => 'validation error',
-                'errors' => $validator->errors()
-            ], 422);
+        if (Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
+            $request->session()->regenerate();
+            return redirect()->route('beranda')
+                ->with('success', 'Selamat datang kembali, ' . Auth::user()->name . '!');
         }
+
+        return back()->withErrors(['email' => 'Email atau password salah.'])->withInput($request->only('email'));
+    }
+
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|email|max:255|unique:users',
+            'password' => ['required', 'confirmed', Password::min(8)],
+            'phone'    => 'nullable|string|max:20',
+            'location' => 'nullable|string|max:255',
+        ], [
+            'name.required'      => 'Nama lengkap wajib diisi',
+            'email.required'     => 'Email wajib diisi',
+            'email.unique'       => 'Email sudah digunakan',
+            'password.required'  => 'Password wajib diisi',
+            'password.confirmed' => 'Konfirmasi password tidak cocok',
+        ]);
+
         $user = User::create([
-            'nama' => $request->nama,
-            'email' => $request->email,
+            'name'     => $request->name,
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'no_wa' => $request->no_wa,
-            'lokasi' => $request->lokasi,
+            'phone'    => $request->phone,
+            'location' => $request->location,
+            'bahasa'   => 'id',
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        Auth::login($user);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'user registered successfully',
-            'data' => $user,
-            'token' => $token
-        ], 201);
-
+        return redirect()->route('beranda')->with('success', 'Akun berhasil dibuat! Selamat datang di Cabaiku.');
     }
 
-    // Login user
-    public function Login(Request $request){
-        $validator = Validator::make($request->all(),[
-            'email' => 'required|email',
-            'password' => 'required|min:4',
-        ]);
-
-        if($validator->fails()){
-            return response()->json([
-                'status' => 'error',
-                'message' => 'validation error',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $user = User::where('email', $request->email)->first();
-
-        if(!$user || !Hash::check($request->password, $user->password)){
-            return response()->json([
-                'status' => 'error',
-                'message' => 'invalid email or password'
-            ], 401);
-        }
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'user logged in successfully',
-            'data' => $user,
-            'token' => $token
-        ], 200);
-    }
-
-    // Logout user
-    public function Logout(){
-        try {
-            Auth::user()->tokens()->delete();
-            return response()->json([
-                'status' => 'success',
-                'message' => 'user logged out successfully'
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'failed to logout user',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    // Get user data
-    public function User(){
-        try {
-            $user = Auth::user();
-            return response()->json([
-                'status' => 'success',
-                'message' => 'user data retrieved successfully',
-                'data' => $user
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'token invalid or expired',
-                'error' => $e->getMessage()
-            ], 590);
-        }
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('login')->with('success', 'Anda berhasil logout.');
     }
 }

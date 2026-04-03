@@ -1,0 +1,288 @@
+{
+  "info": {
+    "name": "Cabaiku Sanctum API",
+    "description": "Postman collection untuk REST API Cabaiku dengan Laravel Sanctum",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "item": [
+    {
+      "name": "Auth - Register",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Demo User\",\n  \"email\": \"demo@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\",\n  \"phone\": \"08123456789\",\n  \"location\": \"Bandung\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/register",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "register"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Auth - Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"demo@example.com\",\n  \"password\": \"password123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "login"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Auth - Me",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/me",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "me"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Artikel - List",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/artikels?q=&kategori=&published_only=true",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "artikels"
+          ],
+          "query": [
+            {
+              "key": "q",
+              "value": ""
+            },
+            {
+              "key": "kategori",
+              "value": ""
+            },
+            {
+              "key": "published_only",
+              "value": "true"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Artikel - Store",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"judul\": \"Tips Merawat Cabai\",\n  \"konten\": \"Isi artikel\",\n  \"ringkasan\": \"Ringkasan artikel\",\n  \"kategori\": \"Perawatan\",\n  \"waktu_baca\": 5,\n  \"penulis\": \"Tim Cabaiku\",\n  \"is_published\": true\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/artikels",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "artikels"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Lahan - List",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/lahans",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "lahans"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Lahan - Store",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nama_lahan\": \"Lahan Utama\",\n  \"lokasi\": \"Garut\",\n  \"luas\": 100.5,\n  \"keterangan\": \"Dekat sumber air\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/lahans",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "lahans"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Deteksi - List",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/deteksis",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "deteksis"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Auth - Logout",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/logout",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "logout"
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ]
+}
