@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Cabaiku') — Deteksi Penyakit Cabai</title>
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <title><?php echo $__env->yieldContent('title', 'Cabaiku'); ?> — Deteksi Penyakit Cabai</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
@@ -109,13 +109,13 @@
 
         @media(max-width:640px){.page-container{padding:20px 14px 0;}.page-header h1{font-size:1.4rem;}}
     </style>
-    @yield('styles')
+    <?php echo $__env->yieldContent('styles'); ?>
 </head>
 <body>
     <nav class="top-nav">
-        <a href="{{ route('beranda') }}" class="brand">Cabai<span>ku</span></a>
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
+        <a href="<?php echo e(route('beranda')); ?>" class="brand">Cabai<span>ku</span></a>
+        <form method="POST" action="<?php echo e(route('logout')); ?>">
+            <?php echo csrf_field(); ?>
             <button type="submit" class="btn-logout">
                 <i class="fa-solid fa-right-from-bracket"></i><span>Keluar</span>
             </button>
@@ -124,42 +124,43 @@
 
     <div class="main-wrapper">
         <div class="page-container">
-            @if(session('success'))
+            <?php if(session('success')): ?>
             <div class="alert alert-success" id="flash-ok">
                 <i class="fa-solid fa-circle-check"></i>
-                <span>{{ session('success') }}</span>
+                <span><?php echo e(session('success')); ?></span>
                 <span class="alert-close" onclick="this.closest('.alert').remove()"><i class="fa-solid fa-xmark"></i></span>
             </div>
-            @endif
-            @if(session('error'))
+            <?php endif; ?>
+            <?php if(session('error')): ?>
             <div class="alert alert-error" id="flash-err">
                 <i class="fa-solid fa-circle-exclamation"></i>
-                <span>{{ session('error') }}</span>
+                <span><?php echo e(session('error')); ?></span>
                 <span class="alert-close" onclick="this.closest('.alert').remove()"><i class="fa-solid fa-xmark"></i></span>
             </div>
-            @endif
-            @if(session('info'))
+            <?php endif; ?>
+            <?php if(session('info')): ?>
             <div class="alert alert-info" id="flash-info">
                 <i class="fa-solid fa-circle-info"></i>
-                <span>{{ session('info') }}</span>
+                <span><?php echo e(session('info')); ?></span>
                 <span class="alert-close" onclick="this.closest('.alert').remove()"><i class="fa-solid fa-xmark"></i></span>
             </div>
-            @endif
-            @yield('content')
+            <?php endif; ?>
+            <?php echo $__env->yieldContent('content'); ?>
         </div>
     </div>
 
     <nav class="bottom-nav">
-        <a href="{{ route('beranda') }}"  class="nav-item {{ request()->routeIs('beranda')   ? 'active' : '' }}"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
-        <a href="{{ route('deteksi') }}"  class="nav-item {{ request()->routeIs('deteksi*')  ? 'active' : '' }}"><i class="fa-solid fa-camera"></i><span>Deteksi</span></a>
-        <a href="{{ route('tips') }}"     class="nav-item {{ request()->routeIs('tips*')     ? 'active' : '' }}"><i class="fa-solid fa-book-open"></i><span>Tips</span></a>
-        <a href="{{ route('riwayat') }}"  class="nav-item {{ request()->routeIs('riwayat*')  ? 'active' : '' }}"><i class="fa-solid fa-clock-rotate-left"></i><span>Riwayat</span></a>
-        <a href="{{ route('profil') }}"   class="nav-item {{ request()->routeIs('profil*')   ? 'active' : '' }}"><i class="fa-solid fa-user"></i><span>Profil</span></a>
+        <a href="<?php echo e(route('beranda')); ?>"  class="nav-item <?php echo e(request()->routeIs('beranda')   ? 'active' : ''); ?>"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
+        <a href="<?php echo e(route('deteksi')); ?>"  class="nav-item <?php echo e(request()->routeIs('deteksi*')  ? 'active' : ''); ?>"><i class="fa-solid fa-camera"></i><span>Deteksi</span></a>
+        <a href="<?php echo e(route('tips')); ?>"     class="nav-item <?php echo e(request()->routeIs('tips*')     ? 'active' : ''); ?>"><i class="fa-solid fa-book-open"></i><span>Tips</span></a>
+        <a href="<?php echo e(route('riwayat')); ?>"  class="nav-item <?php echo e(request()->routeIs('riwayat*')  ? 'active' : ''); ?>"><i class="fa-solid fa-clock-rotate-left"></i><span>Riwayat</span></a>
+        <a href="<?php echo e(route('profil')); ?>"   class="nav-item <?php echo e(request()->routeIs('profil*')   ? 'active' : ''); ?>"><i class="fa-solid fa-user"></i><span>Profil</span></a>
     </nav>
 
     <script>
         setTimeout(()=>{document.querySelectorAll('#flash-ok,#flash-err,#flash-info').forEach(el=>{el.style.transition='all .4s';el.style.opacity='0';setTimeout(()=>el.remove(),400);});},4000);
     </script>
-    @yield('scripts')
+    <?php echo $__env->yieldContent('scripts'); ?>
 </body>
 </html>
+<?php /**PATH D:\kuliah\semester4\projek semster 4\Cabaiku\Backend-Cabaiku\resources\views/layouts/app.blade.php ENDPATH**/ ?>

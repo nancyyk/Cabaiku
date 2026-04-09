@@ -1,6 +1,6 @@
-@extends('layouts.app')
-@section('title','Beranda')
-@section('styles')
+
+<?php $__env->startSection('title','Beranda'); ?>
+<?php $__env->startSection('styles'); ?>
 <style>
 .hero{background:linear-gradient(135deg,#922B21 0%,#C0392B 55%,#E74C3C 100%);border-radius:20px;padding:32px 28px;color:#fff;position:relative;overflow:hidden;margin-bottom:24px;}
 .hero::before{content:'🌶️';position:absolute;right:16px;bottom:-14px;font-size:7rem;opacity:.12;transform:rotate(-15deg);pointer-events:none;}
@@ -66,19 +66,19 @@
 .a-ring{font-size:.76rem;color:var(--text-muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 @media(max-width:600px){.stats-grid{gap:8px;}.stat-num{font-size:1.3rem;}.hero-title{font-size:1.5rem;}.artikel-grid{grid-template-columns:1fr;}}
 </style>
-@endsection
-@section('content')
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('content'); ?>
 <div class="hero">
     <div class="hero-greeting">👋 Halo,</div>
-    <h1 class="hero-title">Selamat Datang,<br>{{ auth()->user()->name }}!</h1>
+    <h1 class="hero-title">Selamat Datang,<br><?php echo e(auth()->user()->name); ?>!</h1>
     <p class="hero-sub">Mari pantau & jaga kesehatan tanaman cabai Anda</p>
-    <a href="{{ route('deteksi') }}" class="btn-hero"><i class="fa-solid fa-camera"></i> Deteksi Penyakit Sekarang</a>
+    <a href="<?php echo e(route('deteksi')); ?>" class="btn-hero"><i class="fa-solid fa-camera"></i> Deteksi Penyakit Sekarang</a>
 </div>
 
 <div class="stats-grid">
-    <div class="stat-card"><div class="stat-icon si-blue"><i class="fa-solid fa-camera"></i></div><div><div class="stat-num">{{ $totalDeteksi }}</div><div class="stat-label">Total Deteksi</div></div></div>
-    <div class="stat-card"><div class="stat-icon si-green"><i class="fa-solid fa-circle-check"></i></div><div><div class="stat-num">{{ $tanamanSehat }}</div><div class="stat-label">Tanaman Sehat</div></div></div>
-    <div class="stat-card"><div class="stat-icon si-orange"><i class="fa-solid fa-circle-exclamation"></i></div><div><div class="stat-num">{{ $perluPerhatian }}</div><div class="stat-label">Perlu Perhatian</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-blue"><i class="fa-solid fa-camera"></i></div><div><div class="stat-num"><?php echo e($totalDeteksi); ?></div><div class="stat-label">Total Deteksi</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-green"><i class="fa-solid fa-circle-check"></i></div><div><div class="stat-num"><?php echo e($tanamanSehat); ?></div><div class="stat-label">Tanaman Sehat</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-orange"><i class="fa-solid fa-circle-exclamation"></i></div><div><div class="stat-num"><?php echo e($perluPerhatian); ?></div><div class="stat-label">Perlu Perhatian</div></div></div>
 </div>
 
 <div class="sec-header">
@@ -86,52 +86,52 @@
     <button class="btn btn-primary btn-sm" onclick="openModal('m-lahan')"><i class="fa-solid fa-plus"></i> Tambah Lahan</button>
 </div>
 
-@if($lahans->isEmpty())
+<?php if($lahans->isEmpty()): ?>
 <div class="lahan-empty">
     <div class="lahan-empty-icon">📍</div>
     <p>Belum ada lahan terdaftar.<br>Tambahkan lahan pertama Anda!</p>
     <button class="btn btn-primary" onclick="openModal('m-lahan')"><i class="fa-solid fa-plus"></i> Tambah Lahan Pertama</button>
 </div>
-@else
+<?php else: ?>
 <div class="lahan-grid">
-    @foreach($lahans as $lahan)
+    <?php $__currentLoopData = $lahans; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $lahan): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
     <div class="lahan-card">
-        <div class="lahan-name">{{ $lahan->nama_lahan }}</div>
-        <div class="lahan-loc"><i class="fa-solid fa-location-dot"></i> {{ $lahan->lokasi }}</div>
-        @if($lahan->luas)<div style="font-size:.74rem;color:var(--text-muted);margin-top:4px;"><i class="fa-solid fa-expand"></i> {{ $lahan->luas }} Ha</div>@endif
+        <div class="lahan-name"><?php echo e($lahan->nama_lahan); ?></div>
+        <div class="lahan-loc"><i class="fa-solid fa-location-dot"></i> <?php echo e($lahan->lokasi); ?></div>
+        <?php if($lahan->luas): ?><div style="font-size:.74rem;color:var(--text-muted);margin-top:4px;"><i class="fa-solid fa-expand"></i> <?php echo e($lahan->luas); ?> Ha</div><?php endif; ?>
         <div class="lahan-footer">
-            <div class="lahan-count"><strong>{{ $lahan->deteksis_count }}</strong> deteksi</div>
+            <div class="lahan-count"><strong><?php echo e($lahan->deteksis_count); ?></strong> deteksi</div>
             <div class="lahan-actions">
                 <button
                     type="button"
                     class="edit-lahan"
                     onclick="openEditLahanModal(this)"
-                    data-id="{{ $lahan->id }}"
-                    data-nama_lahan="{{ $lahan->nama_lahan }}"
-                    data-lokasi="{{ $lahan->lokasi }}"
-                    data-luas="{{ $lahan->luas }}"
-                    data-keterangan="{{ $lahan->keterangan }}"
+                    data-id="<?php echo e($lahan->id); ?>"
+                    data-nama_lahan="<?php echo e($lahan->nama_lahan); ?>"
+                    data-lokasi="<?php echo e($lahan->lokasi); ?>"
+                    data-luas="<?php echo e($lahan->luas); ?>"
+                    data-keterangan="<?php echo e($lahan->keterangan); ?>"
                     title="Edit lahan"
                 >
                     <i class="fa-solid fa-pen"></i>
                 </button>
-                <form method="POST" action="{{ route('lahan.destroy',$lahan->id) }}" onsubmit="return confirm('Hapus lahan ini?')">
-                    @csrf @method('DELETE')
+                <form method="POST" action="<?php echo e(route('lahan.destroy',$lahan->id)); ?>" onsubmit="return confirm('Hapus lahan ini?')">
+                    <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
                     <button type="submit" class="del-lahan"><i class="fa-solid fa-trash"></i></button>
                 </form>
             </div>
         </div>
     </div>
-    @endforeach
+    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 </div>
-@endif
+<?php endif; ?>
 
 <div class="quick-grid">
-    <a href="{{ route('deteksi') }}" class="quick-card">
+    <a href="<?php echo e(route('deteksi')); ?>" class="quick-card">
         <div class="quick-icon qi-red"><i class="fa-solid fa-camera"></i></div>
         <div><div class="quick-label">Deteksi Penyakit</div><div class="quick-sub">Scan tanaman cabai Anda</div></div>
     </a>
-    <a href="{{ route('tips') }}" class="quick-card">
+    <a href="<?php echo e(route('tips')); ?>" class="quick-card">
         <div class="quick-icon qi-blue"><i class="fa-solid fa-book-open"></i></div>
         <div><div class="quick-label">Tips Perawatan</div><div class="quick-sub">Artikel & panduan lengkap</div></div>
     </a>
@@ -141,25 +141,25 @@
     <div class="tip-icon">💡</div>
     <div>
         <div class="tip-title">Tips Hari Ini untuk Merawat Tanaman Cabai</div>
-        <div class="tip-text">{{ $tipHariIni }}</div>
+        <div class="tip-text"><?php echo e($tipHariIni); ?></div>
     </div>
 </div>
 
 <div class="sec-header">
     <span class="sec-title">📰 Artikel Terbaru</span>
-    <a href="{{ route('tips') }}" class="sec-link">Lihat Semua →</a>
+    <a href="<?php echo e(route('tips')); ?>" class="sec-link">Lihat Semua →</a>
 </div>
 <div class="artikel-grid">
-    @foreach($artikelTerbaru as $ar)
-    <a href="{{ route('tips.show',$ar->id) }}" class="a-card">
-        <img src="{{ $ar->gambar ?? 'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=500' }}" alt="{{ $ar->judul }}" class="a-img">
+    <?php $__currentLoopData = $artikelTerbaru; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ar): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+    <a href="<?php echo e(route('tips.show',$ar->id)); ?>" class="a-card">
+        <img src="<?php echo e($ar->gambar ?? 'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=500'); ?>" alt="<?php echo e($ar->judul); ?>" class="a-img">
         <div class="a-body">
-            <div class="a-meta"><span class="a-kat">{{ $ar->kategori }}</span><span class="a-waktu"><i class="fa-regular fa-clock"></i> {{ $ar->waktu_baca }} mnt</span></div>
-            <div class="a-judul">{{ $ar->judul }}</div>
-            <div class="a-ring">{{ $ar->ringkasan }}</div>
+            <div class="a-meta"><span class="a-kat"><?php echo e($ar->kategori); ?></span><span class="a-waktu"><i class="fa-regular fa-clock"></i> <?php echo e($ar->waktu_baca); ?> mnt</span></div>
+            <div class="a-judul"><?php echo e($ar->judul); ?></div>
+            <div class="a-ring"><?php echo e($ar->ringkasan); ?></div>
         </div>
     </a>
-    @endforeach
+    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 </div>
 
 <!-- Modal Tambah Lahan -->
@@ -169,26 +169,54 @@
             <span class="modal-title">Tambah Lahan Baru</span>
             <button class="modal-close" onclick="closeModal('m-lahan')"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <form method="POST" action="{{ route('lahan.store') }}">
-            @csrf
+        <form method="POST" action="<?php echo e(route('lahan.store')); ?>">
+            <?php echo csrf_field(); ?>
             <div class="modal-body">
                 <div class="form-group">
                     <label class="form-label">Nama Lahan <span style="color:#EF4444">*</span></label>
-                    <input type="text" name="nama_lahan" class="form-control @error('nama_lahan') is-invalid @enderror" placeholder="cth: Lahan Utama Blok A" value="{{ old('nama_lahan') }}" required>
-                    @error('nama_lahan')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                    <input type="text" name="nama_lahan" class="form-control <?php $__errorArgs = ['nama_lahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" placeholder="cth: Lahan Utama Blok A" value="<?php echo e(old('nama_lahan')); ?>" required>
+                    <?php $__errorArgs = ['nama_lahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><span class="invalid-feedback"><?php echo e($message); ?></span><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Lokasi <span style="color:#EF4444">*</span></label>
-                    <input type="text" name="lokasi" class="form-control @error('lokasi') is-invalid @enderror" placeholder="cth: Brebes, Jawa Tengah" value="{{ old('lokasi') }}" required>
-                    @error('lokasi')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                    <input type="text" name="lokasi" class="form-control <?php $__errorArgs = ['lokasi'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" placeholder="cth: Brebes, Jawa Tengah" value="<?php echo e(old('lokasi')); ?>" required>
+                    <?php $__errorArgs = ['lokasi'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><span class="invalid-feedback"><?php echo e($message); ?></span><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Luas Lahan (Ha)</label>
-                    <input type="number" name="luas" class="form-control" step="0.01" min="0" placeholder="cth: 0.5" value="{{ old('luas') }}">
+                    <input type="number" name="luas" class="form-control" step="0.01" min="0" placeholder="cth: 0.5" value="<?php echo e(old('luas')); ?>">
                 </div>
                 <div class="form-group" style="margin-bottom:0">
                     <label class="form-label">Keterangan</label>
-                    <textarea name="keterangan" class="form-control" placeholder="Keterangan tambahan...">{{ old('keterangan') }}</textarea>
+                    <textarea name="keterangan" class="form-control" placeholder="Keterangan tambahan..."><?php echo e(old('keterangan')); ?></textarea>
                 </div>
             </div>
             <div class="modal-footer">
@@ -206,30 +234,86 @@
             <span class="modal-title">Edit Lahan</span>
             <button class="modal-close" onclick="closeModal('m-lahan-edit')"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <form id="edit-lahan-form" method="POST" action="{{ route('lahan.update', old('lahan_id', 0)) }}">
-            @csrf
-            @method('PUT')
-            <input type="hidden" id="edit-lahan-id" name="lahan_id" value="{{ old('lahan_id') }}">
+        <form id="edit-lahan-form" method="POST" action="<?php echo e(route('lahan.update', old('lahan_id', 0))); ?>">
+            <?php echo csrf_field(); ?>
+            <?php echo method_field('PUT'); ?>
+            <input type="hidden" id="edit-lahan-id" name="lahan_id" value="<?php echo e(old('lahan_id')); ?>">
             <div class="modal-body">
                 <div class="form-group">
                     <label class="form-label">Nama Lahan</label>
-                    <input type="text" id="edit-nama-lahan" name="nama_lahan" class="form-control @error('nama_lahan','updateLahan') is-invalid @enderror" placeholder="cth: Lahan Utama Blok A" value="{{ old('nama_lahan') }}">
-                    @error('nama_lahan','updateLahan')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                    <input type="text" id="edit-nama-lahan" name="nama_lahan" class="form-control <?php $__errorArgs = ['nama_lahan','updateLahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" placeholder="cth: Lahan Utama Blok A" value="<?php echo e(old('nama_lahan')); ?>">
+                    <?php $__errorArgs = ['nama_lahan','updateLahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><span class="invalid-feedback"><?php echo e($message); ?></span><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Lokasi</label>
-                    <input type="text" id="edit-lokasi" name="lokasi" class="form-control @error('lokasi','updateLahan') is-invalid @enderror" placeholder="cth: Brebes, Jawa Tengah" value="{{ old('lokasi') }}">
-                    @error('lokasi','updateLahan')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                    <input type="text" id="edit-lokasi" name="lokasi" class="form-control <?php $__errorArgs = ['lokasi','updateLahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" placeholder="cth: Brebes, Jawa Tengah" value="<?php echo e(old('lokasi')); ?>">
+                    <?php $__errorArgs = ['lokasi','updateLahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><span class="invalid-feedback"><?php echo e($message); ?></span><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Luas Lahan (Ha)</label>
-                    <input type="number" id="edit-luas" name="luas" class="form-control @error('luas','updateLahan') is-invalid @enderror" step="0.01" min="0" placeholder="cth: 0.5" value="{{ old('luas') }}">
-                    @error('luas','updateLahan')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                    <input type="number" id="edit-luas" name="luas" class="form-control <?php $__errorArgs = ['luas','updateLahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" step="0.01" min="0" placeholder="cth: 0.5" value="<?php echo e(old('luas')); ?>">
+                    <?php $__errorArgs = ['luas','updateLahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><span class="invalid-feedback"><?php echo e($message); ?></span><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                 </div>
                 <div class="form-group" style="margin-bottom:0">
                     <label class="form-label">Keterangan</label>
-                    <textarea id="edit-keterangan" name="keterangan" class="form-control @error('keterangan','updateLahan') is-invalid @enderror" placeholder="Keterangan tambahan...">{{ old('keterangan') }}</textarea>
-                    @error('keterangan','updateLahan')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                    <textarea id="edit-keterangan" name="keterangan" class="form-control <?php $__errorArgs = ['keterangan','updateLahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" placeholder="Keterangan tambahan..."><?php echo e(old('keterangan')); ?></textarea>
+                    <?php $__errorArgs = ['keterangan','updateLahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><span class="invalid-feedback"><?php echo e($message); ?></span><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                 </div>
             </div>
             <div class="modal-footer">
@@ -239,15 +323,15 @@
         </form>
     </div>
 </div>
-@endsection
-@section('scripts')
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('scripts'); ?>
 <script>
 function openModal(id){document.getElementById(id).classList.add('active');document.body.style.overflow='hidden';}
 function closeModal(id){document.getElementById(id).classList.remove('active');document.body.style.overflow='';}
 function openEditLahanModal(btn){
     const id = btn.dataset.id;
     const form = document.getElementById('edit-lahan-form');
-    form.action = "{{ url('/lahan') }}/" + id;
+    form.action = "<?php echo e(url('/lahan')); ?>/" + id;
     document.getElementById('edit-lahan-id').value = id;
     document.getElementById('edit-nama-lahan').value = btn.dataset.nama_lahan || '';
     document.getElementById('edit-lokasi').value = btn.dataset.lokasi || '';
@@ -256,9 +340,11 @@ function openEditLahanModal(btn){
     openModal('m-lahan-edit');
 }
 document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)closeModal(this.id);}));
-const hasCreateLahanError = "{{ $errors->has('nama_lahan') || $errors->has('lokasi') ? '1' : '0' }}" === '1';
-const hasUpdateLahanError = "{{ $errors->updateLahan->any() ? '1' : '0' }}" === '1';
+const hasCreateLahanError = "<?php echo e($errors->has('nama_lahan') || $errors->has('lokasi') ? '1' : '0'); ?>" === '1';
+const hasUpdateLahanError = "<?php echo e($errors->updateLahan->any() ? '1' : '0'); ?>" === '1';
 if (hasCreateLahanError) openModal('m-lahan');
 if (hasUpdateLahanError) openModal('m-lahan-edit');
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\kuliah\semester4\projek semster 4\Cabaiku\Backend-Cabaiku\resources\views/pages/beranda.blade.php ENDPATH**/ ?>

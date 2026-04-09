@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\LahanController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+route::post('/user', [AuthController::class, 'updateProfile']);
 
 Route::get('/artikels', [ArtikelController::class, 'index']);
 Route::get('/artikels/{artikel}', [ArtikelController::class, 'show']);

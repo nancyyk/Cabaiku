@@ -158,3 +158,6 @@ Role belum diaktifkan di code saat ini. Rekomendasi kebijakan akses:
 2. Tambahkan middleware role (misal role:admin).
 3. Pasang middleware role:admin pada endpoint artikel tulis (POST/PUT/PATCH/DELETE).
 4. Pertahankan endpoint artikel baca (GET) agar tetap public.
+
+---
+tambhkan slash (/admin) untuk masuk ke dasbord admin 

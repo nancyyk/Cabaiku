@@ -8,6 +8,9 @@ use App\Http\Controllers\TipsController;
 use App\Http\Controllers\RiwayatController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\LahanController;
+use App\Http\Controllers\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\ArtikelController as AdminArtikelController;
 
 // Guest routes
 Route::middleware('guest')->group(function () {
@@ -29,6 +32,7 @@ Route::middleware('auth')->group(function () {
 
     // Lahan
     Route::post('/lahan',         [LahanController::class, 'store'])->name('lahan.store');
+    Route::put('/lahan/{id}',     [LahanController::class, 'update'])->name('lahan.update');
     Route::delete('/lahan/{id}',  [LahanController::class, 'destroy'])->name('lahan.destroy');
 
     // Tips
@@ -47,4 +51,18 @@ Route::middleware('auth')->group(function () {
 
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('guest')->group(function () {
+        Route::get('/', [AdminAuthController::class, 'showLogin'])->name('login');
+        Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
+    });
+
+    Route::middleware(['auth', 'admin'])->group(function () {
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
+
+        Route::resource('artikels', AdminArtikelController::class)->except(['show']);
+    });
 });

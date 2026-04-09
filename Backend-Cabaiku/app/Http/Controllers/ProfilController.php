@@ -11,6 +11,7 @@ class ProfilController extends Controller
 {
     public function index()
     {
+        /** @var \App\Models\User $user */
         $user         = Auth::user();
         $totalDeteksi = $user->deteksis()->count();
         $artikelDibaca = 15;
@@ -32,7 +33,7 @@ class ProfilController extends Controller
             'email.required' => 'Email wajib diisi',
             'email.unique'   => 'Email sudah digunakan',
         ]);
-
+        /** @var \App\Models\User $user */
         $user->update($request->only('name', 'email', 'phone', 'location'));
         return redirect()->route('profil')->with('success', 'Profil berhasil diperbarui!');
     }
@@ -52,7 +53,7 @@ class ProfilController extends Controller
         if (!Hash::check($request->current_password, $user->password)) {
             return back()->withErrors(['current_password' => 'Password saat ini tidak sesuai']);
         }
-
+        /** @var \App\Models\User $user */
         $user->update(['password' => Hash::make($request->password)]);
         return redirect()->route('profil')->with('success', 'Password berhasil diubah!');
     }
@@ -60,6 +61,7 @@ class ProfilController extends Controller
     public function updateBahasa(Request $request)
     {
         $request->validate(['bahasa' => 'required|in:id,en']);
+        /** @var \App\Models\User $user */
         Auth::user()->update(['bahasa' => $request->bahasa]);
         return redirect()->route('profil')->with('success', 'Bahasa berhasil diubah!');
     }
