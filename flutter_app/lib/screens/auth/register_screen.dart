@@ -8,7 +8,7 @@ class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgLightGreen,
+      backgroundColor: AppColors.primaryBg,
       body: Center(
         child: SingleChildScrollView(
           child: Container(
@@ -17,45 +17,81 @@ class RegisterScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
-              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withOpacity(0.15),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 CircleAvatar(
                   radius: 30,
-                  backgroundColor: AppColors.logoRed,
-                  child: const Icon(Icons.local_fire_department, color: Colors.white, size: 35),
+                  backgroundColor: AppColors.primary,
+                  child: const Icon(
+                    Icons.local_fire_department,
+                    color: Colors.white,
+                    size: 35,
+                  ),
                 ),
                 const SizedBox(height: 16),
-                const Text("Daftar Akun", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                const Text("Bergabung dengan Komunitas Petani Cabai", style: TextStyle(color: AppColors.textGrey, fontSize: 12)),
+                const Text(
+                  "Daftar Akun",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.text,
+                  ),
+                ),
+                const Text(
+                  "Bergabung dengan Komunitas Petani Cabai",
+                  style: TextStyle(color: AppColors.textMuted, fontSize: 12),
+                ),
                 const SizedBox(height: 24),
-                
+
                 _buildField("Nama Lengkap", "Masukkan nama lengkap"),
                 _buildField("Email", "contoh@email.com"),
                 _buildField("No. Telepon", "08xxxxxxxxxx"),
                 _buildField("Password", "Minimal 6 karakter", isPassword: true),
-                _buildField("Konfirmasi Password", "Masukkan ulang password", isPassword: true),
-                
+                _buildField(
+                  "Konfirmasi Password",
+                  "Masukkan ulang password",
+                  isPassword: true,
+                ),
+
                 const SizedBox(height: 16),
 
-               CustomButton(
-                  text: "Daftar", 
+                CustomButton(
+                  text: "Daftar",
                   onPressed: () {
-                    // Setelah daftar, biasanya langsung diarahkan ke Home
                     Navigator.pushReplacementNamed(context, '/home');
                   },
                 ),
-                
+
                 const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Sudah punya akun? ", style: TextStyle(fontSize: 12)),
+                    const Text(
+                      "Sudah punya akun? ",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
-                      child: const Text("Masuk di sini", style: TextStyle(color: AppColors.primaryGreen, fontWeight: FontWeight.bold, fontSize: 12)),
+                      child: const Text(
+                        "Masuk di sini",
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -73,16 +109,41 @@ class RegisterScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+          Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+              color: AppColors.text,
+            ),
+          ),
           const SizedBox(height: 6),
           TextField(
             obscureText: isPassword,
             decoration: InputDecoration(
               hintText: hint,
+              hintStyle: const TextStyle(color: AppColors.textMuted),
               filled: true,
-              fillColor: AppColors.textFieldBg,
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              fillColor: AppColors.surface2,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: AppColors.border),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: AppColors.border),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 2,
+                ),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 10,
+              ),
             ),
           ),
         ],

@@ -12,15 +12,30 @@ class WelcomeCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.primaryGreen,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppColors.primary, AppColors.primaryDark],
+        ),
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withOpacity(0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
             "Selamat Datang, Petani! 👋",
-            style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 8),
           const Text(
@@ -30,10 +45,17 @@ class WelcomeCard extends StatelessWidget {
           const SizedBox(height: 16),
           ElevatedButton.icon(
             onPressed: onDetectTap,
-            icon: const Icon(Icons.camera_alt_outlined, color: AppColors.primaryGreen, size: 20),
+            icon: const Icon(
+              Icons.camera_alt_outlined,
+              color: AppColors.primary,
+              size: 20,
+            ),
             label: const Text(
               "Deteksi Penyakit Sekarang",
-              style: TextStyle(color: AppColors.primaryGreen, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
@@ -42,7 +64,7 @@ class WelcomeCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-          )
+          ),
         ],
       ),
     );

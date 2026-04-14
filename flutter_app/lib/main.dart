@@ -5,8 +5,8 @@ import 'utils/colors.dart';
 import 'screens/home_screen.dart';
 
 // auth
-import 'screens/auth/login_screen.dart';
-import 'screens/auth/register_screen.dart';
+import 'screens/auth/login_screen_new.dart';
+import 'screens/auth/register_screen_new.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       title: 'Cabaiku',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: AppColors.primaryGreen,
+        primaryColor: AppColors.primary,
         useMaterial3: true,
         fontFamily: 'Inter',
       ),

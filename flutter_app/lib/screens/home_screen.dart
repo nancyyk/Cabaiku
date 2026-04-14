@@ -3,7 +3,11 @@ import '../utils/colors.dart';
 import '../widgets/cards/welcome_card.dart';
 import '../widgets/cards/stat_card.dart';
 import '../widgets/cards/menu_card.dart';
+import '../widgets/cards/lahan_card.dart';
+import '../widgets/dialogs/lahan_dialog.dart';
 import '../widgets/navigation/bottom_navbar.dart';
+import '../models/lahan.dart';
+import '../services/api_service.dart';
 import 'tips_screen.dart';
 import 'scan_screen.dart';
 import 'history_screen.dart';
@@ -20,11 +24,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late int _currentIndex;
+  late Future<List<Lahan>> _lahanFuture;
 
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
+    _lahanFuture = ApiService.getLahan();
   }
 
   // Menggunakan getter agar halaman selalu sinkron dengan state terbaru
@@ -36,12 +42,18 @@ class _HomeScreenState extends State<HomeScreen> {
     const ProfileScreen(), // Index 4
   ];
 
+  void _refreshLahan() {
+    setState(() {
+      _lahanFuture = ApiService.getLahan();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: AppColors.primaryGreen,
+        backgroundColor: AppColors.primary,
         elevation: 0,
         centerTitle: false,
         title: const Text(
@@ -103,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const StatCard(
                   icon: Icons.check_circle,
-                  iconColor: AppColors.primaryGreen,
+                  iconColor: AppColors.primary,
                   value: "18",
                   label: "Tanaman Sehat",
                 ),
@@ -119,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Menu Deteksi: Mengarahkan ke Tab Scan (Index 1)
                 MenuCard(
                   icon: Icons.camera_alt_outlined,
-                  iconColor: Colors.redAccent,
+                  iconColor: AppColors.primary,
                   title: "Deteksi Penyakit",
                   subtitle: "Scan tanaman cabai Anda",
                   onTap: () {
@@ -138,6 +150,195 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
               ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // --- SECTION LAHAN ---
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "🌾 Lahan Saya",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.text,
+                  ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) =>
+                          LahanDialog(onSuccess: _refreshLahan),
+                    );
+                  },
+                  icon: const Icon(Icons.add, size: 18),
+                  label: const Text("Tambah"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: FutureBuilder<List<Lahan>>(
+              future: _lahanFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(24.0),
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation(AppColors.primary),
+                      ),
+                    ),
+                  );
+                }
+
+                if (snapshot.hasError) {
+                  final errorText =
+                      snapshot.error?.toString().replaceAll(
+                        'Exception: ',
+                        '',
+                      ) ??
+                      'Terjadi kesalahan tidak diketahui';
+
+                  return Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryBg,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.primary),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.error_outline,
+                          color: AppColors.primary,
+                          size: 32,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Gagal memuat data",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          errorText,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textMuted,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ElevatedButton(
+                          onPressed: _refreshLahan,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                          ),
+                          child: const Text(
+                            "Coba Lagi",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                final lahans = snapshot.data ?? [];
+
+                if (lahans.isEmpty) {
+                  return Container(
+                    padding: const EdgeInsets.all(32),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface2,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: AppColors.border,
+                        style: BorderStyle.solid,
+                        strokeAlign: BorderSide.strokeAlignCenter,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.landscape_outlined,
+                          size: 48,
+                          color: AppColors.textMuted,
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          "Belum Ada Lahan",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.text,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Tambahkan lahan pertama Anda untuk memulai",
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: AppColors.textMuted,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) =>
+                                  LahanDialog(onSuccess: _refreshLahan),
+                            );
+                          },
+                          icon: const Icon(Icons.add, size: 18),
+                          label: const Text("Tambah Lahan"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return Column(
+                  children: lahans
+                      .map(
+                        (lahan) =>
+                            LahanCard(lahan: lahan, onRefresh: _refreshLahan),
+                      )
+                      .toList(),
+                );
+              },
             ),
           ),
 
@@ -247,14 +448,18 @@ class _HomeScreenState extends State<HomeScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1FFF1),
+        color: const Color(0xFFFFFBEB),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.green.withOpacity(0.1)),
+        border: Border.all(color: const Color(0xFFFDE68A)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.lightbulb_outline, color: Colors.green, size: 24),
+          const Icon(
+            Icons.lightbulb_outline,
+            color: Color(0xFFD97706),
+            size: 24,
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -265,15 +470,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Colors.green,
+                    color: Color(0xFF92400E),
                   ),
                 ),
                 SizedBox(height: 4),
                 Text(
-                  "Pastikan tanaman cabai mendapat penyiraman teratur di pagi atau sore hari. Hindari penyiraman saat terik matahari untuk mencegah daun terbakar..",
+                  "Pastikan tanaman cabai mendapat penyiraman teratur di pagi atau sore hari. Hindari penyiraman saat terik matahari untuk mencegah daun terbakar.",
                   style: TextStyle(
                     fontSize: 13,
-                    color: Colors.green,
+                    color: Color(0xFF78350F),
                     height: 1.4,
                   ),
                 ),

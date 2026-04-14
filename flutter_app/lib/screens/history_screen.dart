@@ -136,16 +136,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   setState(() => _selectedData = null), // Kembali ke daftar
               child: Row(
                 children: const [
-                  Icon(
-                    Icons.arrow_back,
-                    size: 16,
-                    color: AppColors.primaryGreen,
-                  ),
+                  Icon(Icons.arrow_back, size: 16, color: AppColors.primary),
                   SizedBox(width: 4),
                   Text(
                     "Kembali ke Riwayat",
                     style: TextStyle(
-                      color: AppColors.primaryGreen,
+                      color: AppColors.primary,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -297,85 +293,92 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Widget _buildHistoryItem(int index, Map<String, dynamic> item) {
-  bool isHealthy = item['isHealthy'];
+    bool isHealthy = item['isHealthy'];
 
-  return Container(
-    margin: const EdgeInsets.only(bottom: 16),
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: const Color(0xFFF9F9F9),
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: Colors.black.withOpacity(0.05)),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // 🔥 BARIS ATAS (ICON + STATUS + DELETE)
-        Row(
-          children: [
-            Icon(
-              isHealthy ? Icons.check_circle : Icons.error,
-              color: isHealthy ? Colors.green : Colors.red,
-              size: 20,
-            ),
-            const SizedBox(width: 8),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF9F9F9),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.black.withOpacity(0.05)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 🔥 BARIS ATAS (ICON + STATUS + DELETE)
+          Row(
+            children: [
+              Icon(
+                isHealthy ? Icons.check_circle : Icons.error,
+                color: isHealthy ? Colors.green : Colors.red,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
 
-            Expanded(
-              child: Text(
-                item['status'],
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+              Expanded(
+                child: Text(
+                  item['status'],
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
               ),
-            ),
 
-            // 🔥 tombol hapus kecil (kanan)
-            GestureDetector(
-              onTap: () => _deleteItem(index),
-              child: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
-            ),
-          ],
-        ),
+              // 🔥 tombol hapus kecil (kanan)
+              GestureDetector(
+                onTap: () => _deleteItem(index),
+                child: const Icon(
+                  Icons.delete_outline,
+                  color: Colors.red,
+                  size: 20,
+                ),
+              ),
+            ],
+          ),
 
-        const SizedBox(height: 10),
+          const SizedBox(height: 10),
 
-        // 🔥 BADGE (TINGKAT + AKURASI)
-        Row(
-          children: [
-            _buildBadge(
-              item['tingkat'],
-              isHealthy ? Colors.green : Colors.orange,
-            ),
-            const SizedBox(width: 8),
-            _buildBadge("${item['akurasi']} akurat", const Color.fromARGB(255, 83, 95, 105)),
-          ],
-        ),
+          // 🔥 BADGE (TINGKAT + AKURASI)
+          Row(
+            children: [
+              _buildBadge(
+                item['tingkat'],
+                isHealthy ? Colors.green : Colors.orange,
+              ),
+              const SizedBox(width: 8),
+              _buildBadge(
+                "${item['akurasi']} akurat",
+                const Color.fromARGB(255, 83, 95, 105),
+              ),
+            ],
+          ),
 
-        const SizedBox(height: 10),
+          const SizedBox(height: 10),
 
-        // 🔥 TANGGAL + JAM
-        Row(
-          children: [
-            const Icon(Icons.calendar_today, size: 14, color: Colors.grey),
-            const SizedBox(width: 4),
-            Text(
-              item['tanggal'],
-              style: const TextStyle(color: Colors.grey, fontSize: 12),
-            ),
-            const SizedBox(width: 10),
-            const Icon(Icons.access_time, size: 14, color: Colors.grey),
-            const SizedBox(width: 4),
-            Text(
-              item['jam'],
-              style: const TextStyle(color: Colors.grey, fontSize: 12),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
+          // 🔥 TANGGAL + JAM
+          Row(
+            children: [
+              const Icon(Icons.calendar_today, size: 14, color: Colors.grey),
+              const SizedBox(width: 4),
+              Text(
+                item['tanggal'],
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
+              ),
+              const SizedBox(width: 10),
+              const Icon(Icons.access_time, size: 14, color: Colors.grey),
+              const SizedBox(width: 4),
+              Text(
+                item['jam'],
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildBadge(String text, Color color) {
     return Container(
