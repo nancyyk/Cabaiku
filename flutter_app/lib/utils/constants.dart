@@ -9,7 +9,7 @@ const double fieldSpacing = 16.0;
 // Contoh: http://192.168.1.100:8000/api (untuk development di local network)
 // Contoh: http://localhost:8000/api (untuk development mode)
 // Contoh: https://api.cabaiku.com/api (untuk production)
-const String apiBaseUrl = 'http://192.168.18.102:8001/api';
+const String apiBaseUrl = 'http://192.168.188.1:8001/api';
 const int apiTimeout = 30; // seconds
 // Local Storage Keys
 const String tokenKey = 'auth_token';
