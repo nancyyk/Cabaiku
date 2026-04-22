@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/colors.dart';
 import '../widgets/cards/welcome_card.dart';
 import '../widgets/cards/stat_card.dart';
@@ -8,6 +9,8 @@ import '../widgets/dialogs/lahan_dialog.dart';
 import '../widgets/navigation/bottom_navbar.dart';
 import '../models/lahan.dart';
 import '../services/api_service.dart';
+import '../services/auth_service.dart';
+import '../utils/constants.dart';
 import 'tips_screen.dart';
 import 'scan_screen.dart';
 import 'history_screen.dart';
@@ -25,12 +28,43 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late int _currentIndex;
   late Future<List<Lahan>> _lahanFuture;
+  String _userName = 'Petani';
 
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
     _lahanFuture = ApiService.getLahan();
+    _loadUserName();
+  }
+
+  Future<void> _loadUserName() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString(tokenKey);
+
+      if (token == null || token.isEmpty) {
+        return;
+      }
+
+      final meResult = await AuthService.getMe(token);
+      if (meResult['success'] != true) {
+        return;
+      }
+
+      final userData = Map<String, dynamic>.from(meResult['user'] as Map);
+      final name = (userData['name'] ?? '').toString().trim();
+
+      if (!mounted || name.isEmpty) {
+        return;
+      }
+
+      setState(() {
+        _userName = name;
+      });
+    } catch (_) {
+      // Keep default greeting when user data is unavailable.
+    }
   }
 
   // Menggunakan getter agar halaman selalu sinkron dengan state terbaru
@@ -97,6 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: WelcomeCard(
+              userName: _userName,
               onDetectTap: () {
                 setState(() => _currentIndex = 1);
               },

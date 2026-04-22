@@ -54,7 +54,7 @@
                 <div class="lahan-opt-icon"><i class="fa-solid fa-leaf"></i></div>
                 <div style="flex:1;">
                     <div class="lahan-opt-name">{{ $lahan->nama_lahan }}</div>
-                    <div class="lahan-opt-sub"><i class="fa-solid fa-location-dot"></i> {{ $lahan->lokasi }}{{ $lahan->luas ? ' · '.$lahan->luas.' Ha' : '' }}</div>
+                    <div class="lahan-opt-sub"><i class="fa-solid fa-location-dot"></i> {{ $lahan->lokasi }}{{ $lahan->panjang ? ' · '.$lahan->panjang.' m' : '' }}</div>
                 </div>
                 <i class="fa-solid fa-circle-check" style="color:var(--primary);opacity:{{ old('lahan_id')==$lahan->id ? 1 : 0 }};" id="chk-{{ $lahan->id }}"></i>
             </label>

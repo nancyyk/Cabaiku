@@ -114,12 +114,6 @@
 <body>
     <nav class="top-nav">
         <a href="<?php echo e(route('beranda')); ?>" class="brand">Cabai<span>ku</span></a>
-        <form method="POST" action="<?php echo e(route('logout')); ?>">
-            <?php echo csrf_field(); ?>
-            <button type="submit" class="btn-logout">
-                <i class="fa-solid fa-right-from-bracket"></i><span>Keluar</span>
-            </button>
-        </form>
     </nav>
 
     <div class="main-wrapper">

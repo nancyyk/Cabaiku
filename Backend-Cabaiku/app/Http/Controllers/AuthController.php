@@ -65,9 +65,7 @@ class AuthController extends Controller
             'bahasa'   => 'id',
         ]);
 
-        Auth::login($user);
-
-        return redirect()->route('beranda')->with('success', 'Akun berhasil dibuat! Selamat datang di Cabaiku.');
+        return redirect()->route('login')->with('success', 'Akun berhasil dibuat! Silakan login untuk melanjutkan.');
     }
 
     public function logout(Request $request)

@@ -72,7 +72,7 @@
     </div>
     <div class="form-panel">
         <div class="form-inner">
-            <a href="#" class="mobile-logo">🌶️ Cabaiku</a>
+            <a href="{{ route('home', [], false) }}" class="mobile-logo">🌶️ Cabaiku</a>
             <div class="form-title">Selamat Datang!</div>
             <div class="form-sub">Masuk ke akun Cabaiku Anda</div>
 
@@ -80,7 +80,7 @@
             <div class="alert-box"><i class="fa-solid fa-circle-exclamation"></i> {{ $errors->first() }}</div>
             @endif
 
-            <form method="POST" action="{{ route('login.post') }}">
+            <form method="POST" action="{{ route('login.post', [], false) }}">
                 @csrf
                 <div class="fg">
                     <label class="lbl">Email</label>
@@ -103,7 +103,7 @@
                 <button type="submit" class="btn-sub"><i class="fa-solid fa-right-to-bracket" style="margin-right:8px;"></i>Masuk</button>
             </form>
             <div class="divider"><span>atau</span></div>
-            <div class="switch">Belum punya akun? <a href="{{ route('register') }}">Daftar Sekarang</a></div>
+            <div class="switch">Belum punya akun? <a href="{{ route('register', [], false) }}">Daftar Sekarang</a></div>
         </div>
     </div>
 </div>

@@ -13,7 +13,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('nama_lahan');
             $table->string('lokasi');
-            $table->decimal('luas', 10, 2)->nullable();
+            $table->decimal('lebar', 10, 2)->nullable();
+            $table->decimal('panjang', 10, 2)->nullable();
             $table->text('keterangan')->nullable();
             $table->timestamps();
         });

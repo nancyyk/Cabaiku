@@ -13,7 +13,8 @@ class LahanController extends Controller
         $request->validate([
             'nama_lahan' => 'required|string|max:255',
             'lokasi'     => 'required|string|max:255',
-            'luas'       => 'nullable|numeric|min:0',
+            'lebar'      => 'nullable|numeric|min:0',
+            'panjang'    => 'nullable|numeric|min:0',
             'keterangan' => 'nullable|string|max:500',
         ], [
             'nama_lahan.required' => 'Nama lahan wajib diisi',
@@ -24,7 +25,8 @@ class LahanController extends Controller
             'user_id'    => Auth::id(),
             'nama_lahan' => $request->nama_lahan,
             'lokasi'     => $request->lokasi,
-            'luas'       => $request->luas,
+            'lebar'      => $request->lebar,
+            'panjang'    => $request->panjang,
             'keterangan' => $request->keterangan,
         ]);
 
@@ -44,13 +46,14 @@ class LahanController extends Controller
         $validated = $request->validateWithBag('updateLahan', [
             'nama_lahan' => 'nullable|string|max:255',
             'lokasi'     => 'nullable|string|max:255',
-            'luas'       => 'nullable|numeric|min:0',
+            'lebar'      => 'nullable|numeric|min:0',
+            'panjang'    => 'nullable|numeric|min:0',
             'keterangan' => 'nullable|string|max:500',
         ]);
 
         $changes = [];
 
-        foreach (['nama_lahan', 'lokasi', 'luas', 'keterangan'] as $field) {
+        foreach (['nama_lahan', 'lokasi', 'lebar', 'panjang', 'keterangan'] as $field) {
             $newValue = $validated[$field] ?? null;
             $currentValue = $lahan->{$field};
 
@@ -58,7 +61,7 @@ class LahanController extends Controller
                 continue;
             }
 
-            if ($field === 'luas') {
+            if (in_array($field, ['lebar', 'panjang'], true)) {
                 $newComparable = $newValue !== null ? (float) $newValue : null;
                 $currentComparable = $currentValue !== null ? (float) $currentValue : null;
             } else {

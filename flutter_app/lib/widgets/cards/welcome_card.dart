@@ -3,8 +3,13 @@ import '../../utils/colors.dart';
 
 class WelcomeCard extends StatelessWidget {
   final VoidCallback onDetectTap;
+  final String userName;
 
-  const WelcomeCard({super.key, required this.onDetectTap});
+  const WelcomeCard({
+    super.key,
+    required this.onDetectTap,
+    required this.userName,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +34,8 @@ class WelcomeCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Selamat Datang, Petani! 👋",
+          Text(
+            "Selamat Datang, ${userName.trim().isEmpty ? 'Petani' : userName.trim()}! 👋",
             style: TextStyle(
               color: Colors.white,
               fontSize: 18,

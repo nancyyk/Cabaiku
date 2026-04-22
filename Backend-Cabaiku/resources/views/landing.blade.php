@@ -74,15 +74,15 @@
 <body>
     <nav class="navbar">
         <div class="nav-container">
-            <a href="{{ route('home') }}" class="logo">🌶️ Cabai<span>ku</span></a>
+            <a href="{{ route('home', [], false) }}" class="logo">🌶️ Cabai<span>ku</span></a>
             <ul class="nav-links">
                 <li><a href="#fitur">Fitur</a></li>
                 <li><a href="#cara-kerja">Alur Penggunaan</a></li>
                 <li><a href="#tentang">Tentang</a></li>
             </ul>
             <div class="nav-buttons">
-                <a href="{{ route('login') }}" class="btn btn-login"><i class="fas fa-sign-in-alt" style="margin-right:6px;"></i>Masuk</a>
-                <a href="{{ route('register') }}" class="btn btn-register"><i class="fas fa-user-plus" style="margin-right:6px;"></i>Daftar</a>
+                <a href="{{ route('login', [], false) }}" class="btn btn-login js-auth-nav" data-target="{{ route('login', [], false) }}"><i class="fas fa-sign-in-alt" style="margin-right:6px;"></i>Masuk</a>
+                <a href="{{ route('register', [], false) }}" class="btn btn-register js-auth-nav" data-target="{{ route('register', [], false) }}"><i class="fas fa-user-plus" style="margin-right:6px;"></i>Daftar</a>
             </div>
             <button class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
         </div>
@@ -91,8 +91,8 @@
             <a href="#cara-kerja">Alur Penggunaan</a>
             <a href="#tentang">Tentang</a>
             <div class="nav-buttons">
-                <a href="{{ route('login') }}" class="btn btn-login">Masuk</a>
-                <a href="{{ route('register') }}" class="btn btn-register">Daftar</a>
+                <a href="{{ route('login', [], false) }}" class="btn btn-login js-auth-nav" data-target="{{ route('login', [], false) }}">Masuk</a>
+                <a href="{{ route('register', [], false) }}" class="btn btn-register js-auth-nav" data-target="{{ route('register', [], false) }}">Daftar</a>
             </div>
         </div>
     </nav>
@@ -104,7 +104,7 @@
                                     dalam mengenali kondisi kesehatan tanaman cabai melalui
                                     analisis gambar secara otomatis.</p>
             <div class="hero-buttons">
-                <a href="{{ route('register') }}" class="btn btn-hero btn-hero-primary"><i class="fas fa-rocket" style="margin-right:8px;"></i>Coba Sekarang</a>
+                <a href="{{ route('register', [], false) }}" class="btn btn-hero btn-hero-primary js-auth-nav" data-target="{{ route('register', [], false) }}"><i class="fas fa-rocket" style="margin-right:8px;"></i>Coba Sekarang</a>
                 <a href="#fitur" class="btn btn-hero btn-hero-secondary"><i class="fas fa-info-circle" style="margin-right:8px;"></i>Pelajari Lebih Lanjut</a>
             </div>
         </div>
@@ -141,7 +141,7 @@
             sejak dini melalui analisis gambar berbasis AI. Dengan pemantauan
             yang lebih sederhana, diharapkan perawatan tanaman menjadi lebih
             tepat dan hasil panen dapat terjaga dengan baik.</p>
-            <a href="{{ route('register') }}" class="btn btn-hero btn-hero-primary"><i class="fas fa-user-plus" style="margin-right:8px;"></i>Daftar Sekarang</a>
+            <a href="{{ route('register', [], false) }}" class="btn btn-hero btn-hero-primary js-auth-nav" data-target="{{ route('register', [], false) }}"><i class="fas fa-user-plus" style="margin-right:8px;"></i>Daftar Sekarang</a>
         </div>
     </section>
 
@@ -160,6 +160,7 @@
 function toggleMenu(){const m=document.getElementById('mobileMenu');m.classList.toggle('active');}
 document.querySelectorAll('.mobile-menu a').forEach(l=>{l.addEventListener('click',()=>{document.getElementById('mobileMenu').classList.remove('active');});});
 document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',function(e){e.preventDefault();const t=document.querySelector(this.getAttribute('href'));if(t){t.scrollIntoView({behavior:'smooth'});}});});
+document.querySelectorAll('.js-auth-nav').forEach(a=>{a.addEventListener('click',function(e){e.preventDefault();window.location.assign(this.dataset.target || this.getAttribute('href'));});});
     </script>
 </body>
 </html>

@@ -21,7 +21,8 @@ class LahanController extends Controller
         $validated = $request->validate([
             'nama_lahan' => 'required|string|max:255',
             'lokasi' => 'required|string|max:255',
-            'luas' => 'nullable|numeric|min:0',
+            'lebar' => 'nullable|numeric|min:0',
+            'panjang' => 'nullable|numeric|min:0',
             'keterangan' => 'nullable|string|max:500',
         ]);
 
@@ -48,7 +49,8 @@ class LahanController extends Controller
         $validated = $request->validate([
             'nama_lahan' => 'sometimes|required|string|max:255',
             'lokasi' => 'sometimes|required|string|max:255',
-            'luas' => 'sometimes|nullable|numeric|min:0',
+            'lebar' => 'sometimes|nullable|numeric|min:0',
+            'panjang' => 'sometimes|nullable|numeric|min:0',
             'keterangan' => 'sometimes|nullable|string|max:500',
         ]);
 

@@ -32,6 +32,7 @@
 .lahan-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--primary);}
 .lahan-name{font-weight:700;font-size:.95rem;}
 .lahan-loc{font-size:.76rem;color:var(--text-muted);margin-top:2px;display:flex;align-items:center;gap:4px;}
+.lahan-dim{font-size:.74rem;color:var(--text-muted);margin-top:4px;display:flex;align-items:center;gap:4px;}
 .lahan-footer{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
 .lahan-count{font-size:.78rem;color:var(--text-muted);}
 .lahan-count strong{color:var(--text);}
@@ -63,7 +64,7 @@
 .a-kat{background:var(--primary-bg);color:var(--primary);font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:20px;}
 .a-waktu{font-size:.7rem;color:var(--text-muted);}
 .a-judul{font-weight:700;font-size:.875rem;color:var(--text);margin-bottom:4px;line-height:1.35;}
-.a-ring{font-size:.76rem;color:var(--text-muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.a-ring{font-size:.76rem;color:var(--text-muted);line-height:1.5;line-clamp:2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 @media(max-width:600px){.stats-grid{gap:8px;}.stat-num{font-size:1.3rem;}.hero-title{font-size:1.5rem;}.artikel-grid{grid-template-columns:1fr;}}
 </style>
 @endsection
@@ -98,7 +99,16 @@
     <div class="lahan-card">
         <div class="lahan-name">{{ $lahan->nama_lahan }}</div>
         <div class="lahan-loc"><i class="fa-solid fa-location-dot"></i> {{ $lahan->lokasi }}</div>
-        @if($lahan->luas)<div style="font-size:.74rem;color:var(--text-muted);margin-top:4px;"><i class="fa-solid fa-expand"></i> {{ $lahan->luas }} Ha</div>@endif
+        @if($lahan->lebar || $lahan->panjang)
+        <div class="lahan-dim">
+            <i class="fa-solid fa-ruler-horizontal"></i>
+            <span>
+                @if($lahan->lebar) Lebar: {{ $lahan->lebar }} m @endif
+                @if($lahan->lebar && $lahan->panjang) | @endif
+                @if($lahan->panjang) Panjang: {{ $lahan->panjang }} m @endif
+            </span>
+        </div>
+        @endif
         <div class="lahan-footer">
             <div class="lahan-count"><strong>{{ $lahan->deteksis_count }}</strong> deteksi</div>
             <div class="lahan-actions">
@@ -109,7 +119,8 @@
                     data-id="{{ $lahan->id }}"
                     data-nama_lahan="{{ $lahan->nama_lahan }}"
                     data-lokasi="{{ $lahan->lokasi }}"
-                    data-luas="{{ $lahan->luas }}"
+                    data-lebar="{{ $lahan->lebar }}"
+                    data-panjang="{{ $lahan->panjang }}"
                     data-keterangan="{{ $lahan->keterangan }}"
                     title="Edit lahan"
                 >
@@ -183,8 +194,12 @@
                     @error('lokasi')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Luas Lahan (Ha)</label>
-                    <input type="number" name="luas" class="form-control" step="0.01" min="0" placeholder="cth: 0.5" value="{{ old('luas') }}">
+                    <label class="form-label">Lebar Lahan (m)</label>
+                    <input type="number" name="lebar" class="form-control" step="0.01" min="0" placeholder="cth: 20" value="{{ old('lebar') }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Panjang Lahan (m)</label>
+                    <input type="number" name="panjang" class="form-control" step="0.01" min="0" placeholder="cth: 30" value="{{ old('panjang') }}">
                 </div>
                 <div class="form-group" style="margin-bottom:0">
                     <label class="form-label">Keterangan</label>
@@ -222,9 +237,14 @@
                     @error('lokasi','updateLahan')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Luas Lahan (Ha)</label>
-                    <input type="number" id="edit-luas" name="luas" class="form-control @error('luas','updateLahan') is-invalid @enderror" step="0.01" min="0" placeholder="cth: 0.5" value="{{ old('luas') }}">
-                    @error('luas','updateLahan')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                    <label class="form-label">Lebar Lahan (m)</label>
+                    <input type="number" id="edit-lebar" name="lebar" class="form-control @error('lebar','updateLahan') is-invalid @enderror" step="0.01" min="0" placeholder="cth: 20" value="{{ old('lebar') }}">
+                    @error('lebar','updateLahan')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Panjang Lahan (m)</label>
+                    <input type="number" id="edit-panjang" name="panjang" class="form-control @error('panjang','updateLahan') is-invalid @enderror" step="0.01" min="0" placeholder="cth: 30" value="{{ old('panjang') }}">
+                    @error('panjang','updateLahan')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
                 <div class="form-group" style="margin-bottom:0">
                     <label class="form-label">Keterangan</label>
@@ -251,7 +271,8 @@ function openEditLahanModal(btn){
     document.getElementById('edit-lahan-id').value = id;
     document.getElementById('edit-nama-lahan').value = btn.dataset.nama_lahan || '';
     document.getElementById('edit-lokasi').value = btn.dataset.lokasi || '';
-    document.getElementById('edit-luas').value = btn.dataset.luas || '';
+    document.getElementById('edit-lebar').value = btn.dataset.lebar || '';
+    document.getElementById('edit-panjang').value = btn.dataset.panjang || '';
     document.getElementById('edit-keterangan').value = btn.dataset.keterangan || '';
     openModal('m-lahan-edit');
 }

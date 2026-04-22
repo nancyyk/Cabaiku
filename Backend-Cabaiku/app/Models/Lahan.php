@@ -9,7 +9,7 @@ class Lahan extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'nama_lahan', 'lokasi', 'luas', 'keterangan'];
+    protected $fillable = ['user_id', 'nama_lahan', 'lokasi', 'lebar', 'panjang', 'keterangan'];
 
     public function user()     { return $this->belongsTo(User::class); }
     public function deteksis() { return $this->hasMany(Deteksi::class); }

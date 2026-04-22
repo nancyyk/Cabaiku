@@ -114,12 +114,6 @@
 <body>
     <nav class="top-nav">
         <a href="{{ route('beranda') }}" class="brand">Cabai<span>ku</span></a>
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="btn-logout">
-                <i class="fa-solid fa-right-from-bracket"></i><span>Keluar</span>
-            </button>
-        </form>
     </nav>
 
     <div class="main-wrapper">
