@@ -4,7 +4,7 @@
 [dokumnetasi progrees backend](/Backend-Cabaiku/README.md)
 [dokumnetasi progrees fe-mobile](/flutter_app/README.md)
 
-cara menjalankan project
+cara menjalankan project 
 ```
 git clone https://github.com/nancyyk/Cabaiku
 cd fluterr_app
