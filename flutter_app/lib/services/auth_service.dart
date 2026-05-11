@@ -6,6 +6,8 @@ class AuthService {
   static const String baseUrl = apiBaseUrl;
   static const int timeout = apiTimeout;
 
+  static String _sanitizeBase() => baseUrl.replaceAll('\uFEFF', '').trim();
+
   static String _extractErrorMessage(dynamic responseData, String fallback) {
     if (responseData is Map<String, dynamic>) {
       final message = responseData['message'];
@@ -37,7 +39,7 @@ class AuthService {
     try {
       final response = await http
           .post(
-            Uri.parse('$baseUrl/login'),
+            Uri.parse('${_sanitizeBase()}/login'),
             headers: {'Content-Type': 'application/json'},
             body: jsonEncode({'email': email, 'password': password}),
           )
@@ -56,17 +58,15 @@ class AuthService {
           };
         }
 
-        return {
-          'success': true,
-          'token': token,
-          'user': user,
-        };
+        return {'success': true, 'token': token, 'user': user};
       }
 
       return {
         'success': false,
         'message': _extractErrorMessage(responseData, 'Login gagal'),
-        'errors': responseData is Map<String, dynamic> ? responseData['errors'] : null,
+        'errors': responseData is Map<String, dynamic>
+            ? responseData['errors']
+            : null,
       };
     } catch (e) {
       return {'success': false, 'message': 'Error: ${e.toString()}'};
@@ -84,7 +84,7 @@ class AuthService {
     try {
       final response = await http
           .post(
-            Uri.parse('$baseUrl/register'),
+            Uri.parse('${_sanitizeBase()}/register'),
             headers: {'Content-Type': 'application/json'},
             body: jsonEncode({
               'name': name,
@@ -109,17 +109,15 @@ class AuthService {
           };
         }
 
-        return {
-          'success': true,
-          'token': token,
-          'user': user,
-        };
+        return {'success': true, 'token': token, 'user': user};
       }
 
       return {
         'success': false,
         'message': _extractErrorMessage(responseData, 'Registrasi gagal'),
-        'errors': responseData is Map<String, dynamic> ? responseData['errors'] : null,
+        'errors': responseData is Map<String, dynamic>
+            ? responseData['errors']
+            : null,
       };
     } catch (e) {
       return {'success': false, 'message': 'Error: ${e.toString()}'};
@@ -131,7 +129,7 @@ class AuthService {
     try {
       final response = await http
           .get(
-            Uri.parse('$baseUrl/me'),
+            Uri.parse('${_sanitizeBase()}/me'),
             headers: {
               'Authorization': 'Bearer $token',
               'Content-Type': 'application/json',
@@ -147,7 +145,10 @@ class AuthService {
 
       return {
         'success': false,
-        'message': _extractErrorMessage(responseData, 'Gagal mendapatkan data user'),
+        'message': _extractErrorMessage(
+          responseData,
+          'Gagal mendapatkan data user',
+        ),
       };
     } catch (e) {
       return {'success': false, 'message': 'Error: ${e.toString()}'};
@@ -159,7 +160,7 @@ class AuthService {
     try {
       final response = await http
           .post(
-            Uri.parse('$baseUrl/logout'),
+            Uri.parse('${_sanitizeBase()}/logout'),
             headers: {
               'Authorization': 'Bearer $token',
               'Content-Type': 'application/json',

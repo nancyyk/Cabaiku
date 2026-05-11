@@ -4,8 +4,9 @@ class Lahan {
   final int? id;
   final String namaLahan;
   final String lokasi;
-  final double? luasLahan;
-  final String? deskripsi;
+  final double? panjang;
+  final double? lebar;
+  final String? keterangan;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -13,8 +14,9 @@ class Lahan {
     this.id,
     required this.namaLahan,
     required this.lokasi,
-    this.luasLahan,
-    this.deskripsi,
+    this.panjang,
+    this.lebar,
+    this.keterangan,
     this.createdAt,
     this.updatedAt,
   });
@@ -24,20 +26,21 @@ class Lahan {
       id: _parseInt(json['id']),
       namaLahan: (json['nama_lahan'] ?? json['namaLahan'] ?? '').toString(),
       lokasi: (json['lokasi'] ?? '').toString(),
-      luasLahan: _parseDouble(json['luas_lahan'] ?? json['luas']),
-      deskripsi: _parseString(json['deskripsi'] ?? json['keterangan']),
+      panjang: _parseDouble(json['panjang']),
+      lebar: _parseDouble(json['lebar']),
+      keterangan: _parseString(json['keterangan']),
       createdAt: _parseDate(json['created_at']),
       updatedAt: _parseDate(json['updated_at']),
     );
   }
 
   Map<String, dynamic> toJson() {
-    // Gunakan nama field yang sesuai backend API Laravel saat ini.
     return {
       'nama_lahan': namaLahan,
       'lokasi': lokasi,
-      'luas': luasLahan,
-      'keterangan': deskripsi,
+      'panjang': panjang,
+      'lebar': lebar,
+      'keterangan': keterangan,
     };
   }
 

@@ -105,7 +105,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       final userData = Map<String, dynamic>.from(meResult['user'] as Map);
       final List<Lahan> lahanList = await ApiService.getLahan();
-      final totalLuas = lahanList.fold<double>(0, (sum, item) => sum + (item.luasLahan ?? 0));
+      // Hitung total luas dari panjang × lebar (dalam m²), konversi ke hektar
+      final totalLuasM2 = lahanList.fold<double>(
+        0,
+        (sum, item) => sum + ((item.panjang ?? 0) * (item.lebar ?? 0)),
+      );
+      final totalLuas = totalLuasM2 / 10000;
 
       final name = (userData['name'] ?? '-').toString();
       final email = (userData['email'] ?? '-').toString();

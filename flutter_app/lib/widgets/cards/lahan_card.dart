@@ -167,12 +167,12 @@ class LahanCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          // Info luas lahan dan deskripsi
-          if (lahan.luasLahan != null)
+          // Info dimensi lahan dan keterangan
+          if (lahan.panjang != null || lahan.lebar != null)
             Column(
               children: [
                 Text(
-                  'Luas Lahan: ${lahan.luasLahan} hektar',
+                  'Dimensi: ${lahan.panjang ?? '-'} m × ${lahan.lebar ?? '-'} m',
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.textMuted,
@@ -181,9 +181,9 @@ class LahanCard extends StatelessWidget {
                 const SizedBox(height: 4),
               ],
             ),
-          if (lahan.deskripsi != null && lahan.deskripsi!.isNotEmpty)
+          if (lahan.keterangan != null && lahan.keterangan!.isNotEmpty)
             Text(
-              lahan.deskripsi!,
+              lahan.keterangan!,
               style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,

@@ -16,8 +16,9 @@ class LahanDialog extends StatefulWidget {
 class _LahanDialogState extends State<LahanDialog> {
   late TextEditingController _namaController;
   late TextEditingController _lokasiController;
-  late TextEditingController _luasController;
-  late TextEditingController _deskripsiController;
+  late TextEditingController _panjangController;
+  late TextEditingController _lebarController;
+  late TextEditingController _keteranganController;
   bool _isLoading = false;
 
   @override
@@ -27,11 +28,14 @@ class _LahanDialogState extends State<LahanDialog> {
       text: widget.lahan?.namaLahan ?? '',
     );
     _lokasiController = TextEditingController(text: widget.lahan?.lokasi ?? '');
-    _luasController = TextEditingController(
-      text: widget.lahan?.luasLahan?.toString() ?? '',
+    _panjangController = TextEditingController(
+      text: widget.lahan?.panjang?.toString() ?? '',
     );
-    _deskripsiController = TextEditingController(
-      text: widget.lahan?.deskripsi ?? '',
+    _lebarController = TextEditingController(
+      text: widget.lahan?.lebar?.toString() ?? '',
+    );
+    _keteranganController = TextEditingController(
+      text: widget.lahan?.keterangan ?? '',
     );
   }
 
@@ -39,9 +43,16 @@ class _LahanDialogState extends State<LahanDialog> {
   void dispose() {
     _namaController.dispose();
     _lokasiController.dispose();
-    _luasController.dispose();
-    _deskripsiController.dispose();
+    _panjangController.dispose();
+    _lebarController.dispose();
+    _keteranganController.dispose();
     super.dispose();
+  }
+
+  double? _parseField(String text) {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) return null;
+    return double.tryParse(trimmed.replaceAll(',', '.'));
   }
 
   Future<void> _submitForm() async {
@@ -55,15 +66,24 @@ class _LahanDialogState extends State<LahanDialog> {
       return;
     }
 
-    final luasText = _luasController.text.trim();
-    final luasValue = luasText.isEmpty
-        ? null
-        : double.tryParse(luasText.replaceAll(',', '.'));
-
-    if (luasText.isNotEmpty && luasValue == null) {
+    final panjangText = _panjangController.text.trim();
+    final panjangValue = _parseField(panjangText);
+    if (panjangText.isNotEmpty && panjangValue == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Luas lahan harus berupa angka yang valid'),
+          content: Text('Panjang lahan harus berupa angka yang valid'),
+          backgroundColor: AppColors.danger,
+        ),
+      );
+      return;
+    }
+
+    final lebarText = _lebarController.text.trim();
+    final lebarValue = _parseField(lebarText);
+    if (lebarText.isNotEmpty && lebarValue == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Lebar lahan harus berupa angka yang valid'),
           backgroundColor: AppColors.danger,
         ),
       );
@@ -77,10 +97,11 @@ class _LahanDialogState extends State<LahanDialog> {
         id: widget.lahan?.id,
         namaLahan: _namaController.text.trim(),
         lokasi: _lokasiController.text.trim(),
-        luasLahan: luasValue,
-        deskripsi: _deskripsiController.text.isEmpty
+        panjang: panjangValue,
+        lebar: lebarValue,
+        keterangan: _keteranganController.text.isEmpty
             ? null
-            : _deskripsiController.text.trim(),
+            : _keteranganController.text.trim(),
       );
 
       if (widget.lahan == null) {
@@ -164,17 +185,33 @@ class _LahanDialogState extends State<LahanDialog> {
                 hint: 'Contoh: Jl. Raya No. 123',
               ),
               const SizedBox(height: 16),
-              _buildTextField(
-                controller: _luasController,
-                label: 'Luas Lahan (hektar)',
-                icon: Icons.straighten,
-                hint: 'Contoh: 0.5',
-                keyboardType: TextInputType.number,
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildTextField(
+                      controller: _panjangController,
+                      label: 'Panjang (m)',
+                      icon: Icons.straighten,
+                      hint: 'Contoh: 10',
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildTextField(
+                      controller: _lebarController,
+                      label: 'Lebar (m)',
+                      icon: Icons.straighten,
+                      hint: 'Contoh: 5',
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               _buildTextField(
-                controller: _deskripsiController,
-                label: 'Deskripsi (opsional)',
+                controller: _keteranganController,
+                label: 'Keterangan (opsional)',
                 icon: Icons.description,
                 hint: 'Catatan tambahan tentang lahan',
                 maxLines: 3,

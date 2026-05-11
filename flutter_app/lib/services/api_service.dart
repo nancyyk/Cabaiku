@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -9,8 +10,13 @@ class ApiService {
   static const String baseUrl = apiBaseUrl;
   static const int timeout = apiTimeout;
 
+  static String _sanitizeBase() => baseUrl.replaceAll('\uFEFF', '').trim();
+
   static Future<Map<String, String>> _getAuthHeaders() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance()
+        .timeout(const Duration(seconds: 5), onTimeout: () {
+      throw Exception('Gagal membaca sesi login. Coba restart aplikasi.');
+    });
     final token = prefs.getString(tokenKey);
 
     if (token == null || token.isEmpty) {
@@ -73,7 +79,7 @@ class ApiService {
     try {
       final headers = await _getAuthHeaders();
       final response = await http
-          .get(Uri.parse('$baseUrl/lahans'), headers: headers)
+          .get(Uri.parse('${_sanitizeBase()}/lahans'), headers: headers)
           .timeout(Duration(seconds: timeout));
 
       if (response.statusCode == 200) {
@@ -110,7 +116,7 @@ class ApiService {
     try {
       final headers = await _getAuthHeaders();
       final response = await http
-          .get(Uri.parse('$baseUrl/lahans/$id'), headers: headers)
+          .get(Uri.parse('${_sanitizeBase()}/lahans/$id'), headers: headers)
           .timeout(Duration(seconds: timeout));
 
       if (response.statusCode == 200) {
@@ -135,7 +141,7 @@ class ApiService {
       final headers = await _getAuthHeaders();
       final response = await http
           .post(
-            Uri.parse('$baseUrl/lahans'),
+            Uri.parse('${_sanitizeBase()}/lahans'),
             headers: headers,
             body: jsonEncode(lahan.toJson()),
           )
@@ -163,7 +169,7 @@ class ApiService {
       final headers = await _getAuthHeaders();
       final response = await http
           .put(
-            Uri.parse('$baseUrl/lahans/$id'),
+            Uri.parse('${_sanitizeBase()}/lahans/$id'),
             headers: headers,
             body: jsonEncode(lahan.toJson()),
           )
@@ -190,7 +196,7 @@ class ApiService {
     try {
       final headers = await _getAuthHeaders();
       final response = await http
-          .delete(Uri.parse('$baseUrl/lahans/$id'), headers: headers)
+          .delete(Uri.parse('${_sanitizeBase()}/lahans/$id'), headers: headers)
           .timeout(Duration(seconds: timeout));
 
       if (response.statusCode == 200 || response.statusCode == 204) {
@@ -205,6 +211,61 @@ class ApiService {
       );
     } catch (e) {
       throw Exception('Error deleting lahan: $e');
+    }
+  }
+
+  // ─── Deteksi ────────────────────────────────────────────────────────────────
+
+  /// Kirim gambar + lahan_id + catatan ke endpoint POST /deteksis.
+  /// Backend membutuhkan multipart/form-data karena ada file gambar.
+  static Future<Map<String, dynamic>> createDeteksi({
+    required int lahanId,
+    required File gambar,
+    String? catatan,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString(tokenKey);
+
+      if (token == null || token.isEmpty) {
+        throw Exception('Token login tidak ditemukan. Silakan login ulang.');
+      }
+
+      final uri = Uri.parse('${_sanitizeBase()}/deteksis');
+      final request = http.MultipartRequest('POST', uri)
+        ..headers['Accept'] = 'application/json'
+        ..headers['Authorization'] = 'Bearer $token'
+        ..fields['lahan_id'] = lahanId.toString();
+
+      if (catatan != null && catatan.trim().isNotEmpty) {
+        request.fields['catatan'] = catatan.trim();
+      }
+
+      final ext = gambar.path.split('.').last.toLowerCase();
+      final mimeType = switch (ext) {
+        'png' => 'image/png',
+        'webp' => 'image/webp',
+        _ => 'image/jpeg',
+      };
+
+      request.files.add(await http.MultipartFile.fromPath(
+        'gambar',
+        gambar.path,
+        contentType: http.MediaType.parse(mimeType),
+      ));
+
+      final streamed = await request.send().timeout(Duration(seconds: timeout));
+      final body = await streamed.stream.bytesToString();
+
+      if (streamed.statusCode == 200 || streamed.statusCode == 201) {
+        return jsonDecode(body) as Map<String, dynamic>;
+      }
+
+      throw Exception(
+        _extractErrorMessage(body, 'Gagal mengirim deteksi (${streamed.statusCode})'),
+      );
+    } catch (e) {
+      throw Exception('Error creating deteksi: $e');
     }
   }
 }
