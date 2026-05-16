@@ -105,7 +105,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       );
 
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/login');
     } else {
       setState(() {
         _errorMessage = result['message']?.toString() ?? 'Registrasi gagal';

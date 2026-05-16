@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChiliScan AI - Real-time Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #2563eb; --success: #059669; --warning: #d97706; --bg: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); display: flex; justify-content: center; padding: 40px 20px; }
+        .card { background: white; padding: 32px; border-radius: 24px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); width: 100%; max-width: 550px; }
+        .header { text-align: center; margin-bottom: 24px; }
+        .header h1 { color: var(--primary); margin: 0; font-size: 24px; }
+        
+        .upload-area {
+            border: 2px dashed #e2e8f0; border-radius: 16px; padding: 20px;
+            text-align: center; cursor: pointer; margin-bottom: 20px; background: #fdfdfd;
+        }
+
+        /* Container untuk gambar agar tetap rapi saat berganti ukuran */
+        .image-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 150px;
+        }
+        
+        #preview {
+            max-width: 100%; border-radius: 12px; display: none;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 2px solid #fff;
+        }
+
+        .img-label { font-size: 12px; color: #94a3b8; margin-top: 8px; display: none; }
+
+        button {
+            width: 100%; background: var(--primary); color: white; border: none;
+            padding: 16px; border-radius: 12px; font-weight: 600; cursor: pointer;
+        }
+        button:disabled { opacity: 0.6; }
+
+        #resultArea { margin-top: 32px; display: none; border-top: 2px solid #f1f5f9; padding-top: 24px; }
+        .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .badge { padding: 6px 12px; border-radius: 99px; font-size: 12px; font-weight: 700; }
+        .badge-success { background: #dcfce7; color: var(--success); }
+        .badge-warning { background: #fef3c7; color: var(--warning); }
+
+        .saran-box { background: #f0f9ff; border-left: 4px solid var(--primary); padding: 16px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; }
+        table { width: 100%; font-size: 14px; border-collapse: collapse; color: #475569; }
+        td { padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+        .score-val { text-align: right; font-weight: 600; color: #1e293b; }
+        .footer-info { display: block; text-align: right; font-size: 11px; color: #94a3b8; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <h1>🌶️ ChiliScan AI</h1>
+        <p>Analisis Citra Skala 224x224</p>
+    </div>
+
+    <div class="upload-area" onclick="document.getElementById('imageInput').click()">
+        <div id="dropText">
+            <p>Klik untuk pilih foto daun</p>
+        </div>
+        <div class="image-container">
+            <img id="preview" src="#" alt="Preview">
+            <span id="imgLabel" class="img-label">Tampilan: Hasil Preprocessing AI (224x224)</span>
+        </div>
+    </div>
+
+    <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="handlePreview(this)">
+    
+    <button id="btnAnalyze" onclick="startAnalysis()">Analisis Sekarang</button>
+
+    <div id="resultArea">
+        <div class="result-header">
+            <span style="font-size: 18px; font-weight: 700;" id="resTitle">Hasil Diagnosa</span>
+            <span id="resBadge" class="badge">Valid</span>
+        </div>
+
+        <div class="saran-box">
+            <strong>💡 Saran Tindakan:</strong>
+            <span id="resSaran">-</span>
+        </div>
+
+        <table id="scoreTable"></table>
+        <span class="footer-info" id="resLatency">Latency: 0ms</span>
+    </div>
+</div>
+
+<script>
+    // 1. Preview awal gambar yang dipilih user
+    function handlePreview(input) {
+        const preview = document.getElementById('preview');
+        const dropText = document.getElementById('dropText');
+        const imgLabel = document.getElementById('imgLabel');
+        
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                preview.style.width = 'auto'; // Ukuran bebas dulu
+                dropText.style.display = 'none';
+                imgLabel.style.display = 'none'; // Sembunyikan label dulu
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // 2. Kirim ke API dan ambil gambar hasil scale
+    async function startAnalysis() {
+        const fileInput = document.getElementById('imageInput');
+        if (fileInput.files.length === 0) return alert("Pilih gambar dulu!");
+
+        const btn = document.getElementById('btnAnalyze');
+        const resultArea = document.getElementById('resultArea');
+        const preview = document.getElementById('preview');
+        const imgLabel = document.getElementById('imgLabel');
+
+        btn.innerText = "⚡ Menganalisis...";
+        btn.disabled = true;
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        try {
+            const response = await fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            // --- GANTI GAMBAR DENGAN HASIL SCALE AI ---
+            preview.src = "data:image/jpeg;base64," + data.image_data;
+            preview.style.width = "224px";  // Paksa ke ukuran 224px
+            preview.style.height = "224px"; // Biar keliatan kotak 1:1
+            imgLabel.style.display = 'block'; // Munculkan keterangan
+
+            // Update UI
+            resultArea.style.display = 'block';
+            document.getElementById('resTitle').innerText = data.prediction.class;
+            document.getElementById('resSaran').innerText = data.prediction.saran;
+            document.getElementById('resLatency').innerText = `Latency: ${data.analysis_details.latency_ms} | Status: ${data.status}`;
+
+            const badge = document.getElementById('resBadge');
+            badge.innerText = data.prediction.confidence;
+            badge.className = data.status === "Valid" ? "badge badge-success" : "badge badge-warning";
+
+            const table = document.getElementById('scoreTable');
+            table.innerHTML = "";
+            for (const [cls, val] of Object.entries(data.analysis_details.all_scores)) {
+                table.innerHTML += `<tr><td>${cls}</td><td class="score-val">${val}</td></tr>`;
+            }
+
+        } catch (error) {
+            console.log("Error:", error);
+        } finally {
+            btn.innerText = "Analisis Sekarang";
+            btn.disabled = false;
+        }
+    }
+</script>
+</body>
+</html>

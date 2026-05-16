@@ -28,7 +28,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late int _currentIndex;
   late Future<List<Lahan>> _lahanFuture;
+  int _scanRefreshToken = 0;
   String _userName = 'Petani';
+  bool _isLoadingStats = true;
+  int _totalDeteksi = 0;
+  int _tanamanSehat = 0;
+  int _perluPerhatian = 0;
 
   @override
   void initState() {
@@ -36,6 +41,45 @@ class _HomeScreenState extends State<HomeScreen> {
     _currentIndex = widget.initialIndex;
     _lahanFuture = ApiService.getLahan();
     _loadUserName();
+    _loadDetectionStats();
+  }
+
+  Future<void> _loadDetectionStats() async {
+    setState(() {
+      _isLoadingStats = true;
+    });
+
+    try {
+      final deteksis = await ApiService.getDeteksis();
+      if (!mounted) return;
+
+      final sehatCount = deteksis.where(_isHealthyResult).length;
+      final total = deteksis.length;
+
+      setState(() {
+        _totalDeteksi = total;
+        _tanamanSehat = sehatCount;
+        _perluPerhatian = total - sehatCount;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _totalDeteksi = 0;
+        _tanamanSehat = 0;
+        _perluPerhatian = 0;
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoadingStats = false;
+        });
+      }
+    }
+  }
+
+  bool _isHealthyResult(Map<String, dynamic> item) {
+    final hasil = (item['hasil'] ?? '').toString().toLowerCase();
+    return hasil.contains('sehat') || hasil.contains('healthy');
   }
 
   Future<void> _loadUserName() async {
@@ -70,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // Menggunakan getter agar halaman selalu sinkron dengan state terbaru
   List<Widget> get _pages => [
     _buildBerandaContent(), // Index 0
-    const ScanScreen(), // Index 1
+    ScanScreen(refreshToken: _scanRefreshToken), // Index 1
     const TipsScreen(), // Index 2
     const HistoryScreen(), // Index 3
     const ProfileScreen(), // Index 4
@@ -80,6 +124,42 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _lahanFuture = ApiService.getLahan();
     });
+  }
+
+  void _refreshScanScreen() {
+    setState(() {
+      _scanRefreshToken++;
+    });
+  }
+
+  Future<void> _confirmLogout() async {
+    final shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Konfirmasi Keluar'),
+          content: const Text('Apakah Anda yakin ingin keluar dari akun?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Batal'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context, true),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Keluar'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldLogout == true && mounted) {
+      Navigator.pushReplacementNamed(context, '/login');
+    }
   }
 
   @override
@@ -97,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           // Tombol Keluar yang berfungsi
           TextButton.icon(
-            onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
+            onPressed: _confirmLogout,
             icon: const Icon(Icons.logout, color: Colors.white, size: 16),
             label: const Text(
               "Keluar",
@@ -117,6 +197,12 @@ class _HomeScreenState extends State<HomeScreen> {
           setState(() {
             _currentIndex = index;
           });
+          if (index == 0) {
+            _loadDetectionStats();
+          }
+          if (index == 1) {
+            _refreshScanScreen();
+          }
         },
       ),
     );
@@ -134,6 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
               userName: _userName,
               onDetectTap: () {
                 setState(() => _currentIndex = 1);
+                _refreshScanScreen();
               },
             ),
           ),
@@ -142,23 +229,23 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               children: [
-                const StatCard(
+                StatCard(
                   icon: Icons.camera_alt,
                   iconColor: Colors.blue,
-                  value: "24",
-                  label: "Total Deteksi",
+                  value: _isLoadingStats ? '...' : _totalDeteksi.toString(),
+                  label: 'Total Deteksi',
                 ),
-                const StatCard(
+                StatCard(
                   icon: Icons.check_circle,
                   iconColor: AppColors.primary,
-                  value: "18",
-                  label: "Tanaman Sehat",
+                  value: _isLoadingStats ? '...' : _tanamanSehat.toString(),
+                  label: 'Tanaman Sehat',
                 ),
-                const StatCard(
+                StatCard(
                   icon: Icons.error,
                   iconColor: Colors.orange,
-                  value: "6",
-                  label: "Perlu Perhatian",
+                  value: _isLoadingStats ? '...' : _perluPerhatian.toString(),
+                  label: 'Perlu Perhatian',
                 ),
 
                 const SizedBox(height: 16),

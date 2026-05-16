@@ -151,8 +151,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 // Form
                 _buildTextField(
-                  "Email atau No. Telepon",
-                  "Masukkan email atau no. telepon",
+                  "Email",
+                  "Masukkan email yang terdaftar",
                   controller: _emailController,
                 ),
                 const SizedBox(height: 16),
