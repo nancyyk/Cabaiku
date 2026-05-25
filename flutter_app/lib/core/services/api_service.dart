@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/lahan.dart';
+import '../../features/lahan/lahan_model.dart';
 import '../utils/constants.dart';
 
 class ApiService {

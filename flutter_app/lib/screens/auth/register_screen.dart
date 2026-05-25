@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../utils/colors.dart';
-import '../../widgets/buttons/custom_button.dart';
+import '../../core/utils/colors.dart';
+import '../../core/widgets/buttons/custom_button.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
