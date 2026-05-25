@@ -24,7 +24,7 @@ class Lahan {
   factory Lahan.fromJson(Map<String, dynamic> json) {
     return Lahan(
       id: _parseInt(json['id']),
-      namaLahan: (json['nama_lahan'] ?? json['namaLahan'] ?? '').toString(),
+      namaLahan: (json['nama_lahan'] ?? '').toString(),
       lokasi: (json['lokasi'] ?? '').toString(),
       panjang: _parseDouble(json['panjang']),
       lebar: _parseDouble(json['lebar']),
@@ -44,23 +44,17 @@ class Lahan {
     };
   }
 
-  static int? _parseInt(dynamic value) {
-    if (value == null) return null;
-    if (value is int) return value;
-    return int.tryParse(value.toString());
-  }
+  static int? _parseInt(dynamic value) =>
+      value == null ? null : int.tryParse(value.toString());
 
   static double? _parseDouble(dynamic value) {
     if (value == null) return null;
-    if (value is double) return value;
-    if (value is int) return value.toDouble();
     return double.tryParse(value.toString());
   }
 
   static String? _parseString(dynamic value) {
-    if (value == null) return null;
-    final result = value.toString().trim();
-    return result.isEmpty ? null : result;
+    final v = value?.toString().trim();
+    return (v == null || v.isEmpty) ? null : v;
   }
 
   static DateTime? _parseDate(dynamic value) {
@@ -69,7 +63,7 @@ class Lahan {
   }
 
   String get formattedDate {
-    if (createdAt == null) return '';
+    if (createdAt == null) return '-';
     return DateFormat('d MMM y', 'id_ID').format(createdAt!);
   }
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'utils/colors.dart';
+import 'core/utils/colors.dart';
 
 // screens
-import 'screens/home_screen.dart';
+import 'features/home/home_screen.dart';
 
 // auth
 import 'screens/auth/login_screen_new.dart';

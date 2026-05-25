@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../models/lahan.dart';
+import '../../../../features/lahan/lahan_model.dart';
 import '../../services/api_service.dart';
 import '../../utils/colors.dart';
 

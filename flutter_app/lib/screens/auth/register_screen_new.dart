@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../utils/colors.dart';
-import '../../utils/constants.dart';
-import '../../services/auth_service.dart';
+import '../../core/utils/colors.dart';
+import '../../core/utils/constants.dart';
+import '../../core/services/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
