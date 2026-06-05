@@ -49,6 +49,21 @@ class ApiService {
     };
   }
 
+  static Future<Map<String, String>> _getOptionalAuthHeaders() async {
+    final headers = <String, String>{
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    };
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString(tokenKey);
+    if (token != null && token.isNotEmpty) {
+      headers['Authorization'] = 'Bearer $token';
+    }
+
+    return headers;
+  }
+
   static String _extractErrorMessage(String body, String fallback) {
     try {
       final decoded = jsonDecode(body);
@@ -246,6 +261,32 @@ class ApiService {
     return [];
   }
 
+  static List<Map<String, dynamic>> _extractMapList(dynamic decoded) {
+    final collections = <List<dynamic>>[];
+
+    if (decoded is List) {
+      collections.add(decoded);
+    } else if (decoded is Map<String, dynamic>) {
+      for (final key in ['data', 'articles', 'items', 'posts', 'results']) {
+        final value = decoded[key];
+        if (value is List) {
+          collections.add(value);
+        } else if (value is Map<String, dynamic>) {
+          collections.add([value]);
+        }
+      }
+
+      if (collections.isEmpty) {
+        collections.add([decoded]);
+      }
+    }
+
+    return collections
+        .expand((items) => items)
+        .whereType<Map<String, dynamic>>()
+        .toList();
+  }
+
   static Map<String, dynamic> _extractObject(dynamic decoded) {
     if (decoded is Map<String, dynamic>) {
       final data = decoded['data'];
@@ -417,6 +458,86 @@ class ApiService {
       );
     } catch (e) {
       throw Exception('Error loading deteksi: $e');
+    }
+  }
+
+  static Future<List<Map<String, dynamic>>> getTipsArticles() async {
+    final headers = await _getOptionalAuthHeaders();
+
+    try {
+      final response = await http
+          .get(
+            Uri.parse('${_sanitizeBase()}$tipsArticleEndpointPath'),
+            headers: headers,
+          )
+          .timeout(Duration(seconds: timeout));
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+        return _extractMapList(decoded);
+      }
+
+      if (response.statusCode == 404) {
+        return [];
+      }
+
+      if (response.statusCode == 401 || response.statusCode == 403) {
+        throw Exception(
+          'Sesi tidak memiliki akses ke data tips. Silakan login ulang.',
+        );
+      }
+
+      throw Exception(
+        _extractErrorMessage(
+          response.body,
+          'Gagal memuat tips (${response.statusCode})',
+        ),
+      );
+    } catch (e) {
+      throw Exception('Error loading tips: $e');
+    }
+  }
+
+  static Future<Map<String, dynamic>?> getTipArticleById(dynamic id) async {
+    if (id == null) return null;
+
+    final textId = id.toString().trim();
+    if (textId.isEmpty) return null;
+
+    final headers = await _getOptionalAuthHeaders();
+    try {
+      final response = await http
+          .get(
+            Uri.parse('${_sanitizeBase()}$tipsArticleEndpointPath/$textId'),
+            headers: headers,
+          )
+          .timeout(Duration(seconds: timeout));
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+        if (decoded is Map<String, dynamic>) {
+          final data = decoded['data'];
+          if (data is Map<String, dynamic>) return data;
+          return decoded;
+        }
+        if (decoded is List &&
+            decoded.isNotEmpty &&
+            decoded.first is Map<String, dynamic>) {
+          return decoded.first as Map<String, dynamic>;
+        }
+        return null;
+      }
+
+      if (response.statusCode == 404) return null;
+
+      throw Exception(
+        _extractErrorMessage(
+          response.body,
+          'Gagal memuat detail tips (${response.statusCode})',
+        ),
+      );
+    } catch (_) {
+      return null;
     }
   }
 

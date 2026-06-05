@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../core/utils/colors.dart';
 
@@ -34,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late int _currentIndex;
 
   int _scanRefreshToken = 0;
+  int _historyRefreshToken = 0;
 
   bool _isLoading = true;
 
@@ -74,7 +76,11 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     final sehat = deteksis
-        .where((e) => e['hasil'].toString().toLowerCase().contains('sehat'))
+        .where((e) => e['hasil'].toString().toLowerCase().trim() == 'sehat')
+        .length;
+
+    final sakit = deteksis
+        .where((e) => e['hasil'].toString().toLowerCase().trim() != 'sehat')
         .length;
 
     setState(() {
@@ -86,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       _tanamanSehat = sehat;
 
-      _perluPerhatian = deteksis.length - sehat;
+      _perluPerhatian = sakit;
 
       _isLoading = false;
     });
@@ -98,6 +104,14 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future<void> _handleDetectionCompleted() async {
+    if (!mounted) return;
+    setState(() {
+      _historyRefreshToken++;
+    });
+    await _loadData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,7 +119,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
       appBar: AppBar(
         backgroundColor: AppColors.primary,
-        title: const Text("Cabaiku"),
+        title: Row(
+          children: [
+            SvgPicture.asset('assets/images/cabai.svg', height: 28),
+            const SizedBox(width: 8),
+            const Text('Cabaiku'),
+          ],
+        ),
       ),
 
       body: IndexedStack(
@@ -113,11 +133,14 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           _buildHomeContent(),
 
-          ScanScreen(refreshToken: _scanRefreshToken),
+          ScanScreen(
+            refreshToken: _scanRefreshToken,
+            onDetectionCompleted: _handleDetectionCompleted,
+          ),
 
           const TipsScreen(),
 
-          const HistoryScreen(),
+          HistoryScreen(refreshToken: _historyRefreshToken),
 
           const ProfileScreen(),
         ],

@@ -1,8 +1,10 @@
 import 'package:equatable/equatable.dart';
 
+import '../../disease_care/disease_care_data.dart';
+
 class TipsState extends Equatable {
   final bool isShowingDetail;
-  final Map<String, String>? selectedArticle;
+  final DiseaseCareContent? selectedArticle;
   final String selectedCategory;
   final String searchQuery;
 
@@ -24,27 +26,23 @@ class TipsState extends Equatable {
 
   TipsState copyWith({
     bool? isShowingDetail,
-    Map<String, String>? selectedArticle,
+    DiseaseCareContent? selectedArticle,
     String? selectedCategory,
     String? searchQuery,
   }) {
     return TipsState(
-      isShowingDetail:
-          isShowingDetail ?? this.isShowingDetail,
-      selectedArticle:
-          selectedArticle ?? this.selectedArticle,
-      selectedCategory:
-          selectedCategory ?? this.selectedCategory,
-      searchQuery:
-          searchQuery ?? this.searchQuery,
+      isShowingDetail: isShowingDetail ?? this.isShowingDetail,
+      selectedArticle: selectedArticle ?? this.selectedArticle,
+      selectedCategory: selectedCategory ?? this.selectedCategory,
+      searchQuery: searchQuery ?? this.searchQuery,
     );
   }
 
   @override
   List<Object?> get props => [
-        isShowingDetail,
-        selectedArticle,
-        selectedCategory,
-        searchQuery,
-      ];
+    isShowingDetail,
+    selectedArticle,
+    selectedCategory,
+    searchQuery,
+  ];
 }

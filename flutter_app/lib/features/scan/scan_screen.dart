@@ -20,8 +20,13 @@ import 'scan_styles.dart';
 
 class ScanScreen extends StatefulWidget {
   final int refreshToken;
+  final Future<void> Function()? onDetectionCompleted;
 
-  const ScanScreen({super.key, this.refreshToken = 0});
+  const ScanScreen({
+    super.key,
+    this.refreshToken = 0,
+    this.onDetectionCompleted,
+  });
 
   @override
   State<ScanScreen> createState() => _ScanScreenState();
@@ -86,12 +91,20 @@ class _ScanScreenState extends State<ScanScreen> {
   }
 
   // ── Image picker ───────────────────────────────────────────────────────────
-  Future<void> _requestPermission(ImageSource source) async {
+  Future<bool> _requestPermission(ImageSource source) async {
+    PermissionStatus status;
+
     if (source == ImageSource.camera) {
-      await Permission.camera.request();
+      status = await Permission.camera.request();
     } else {
-      await Permission.photos.request();
+      status = await Permission.photos.request();
+
+      if (!status.isGranted && !status.isLimited) {
+        status = await Permission.storage.request();
+      }
     }
+
+    return status.isGranted || status.isLimited;
   }
 
   Future<void> _pickImage(ImageSource source) async {
@@ -141,7 +154,11 @@ class _ScanScreenState extends State<ScanScreen> {
               title: const Text('Ambil dari Kamera'),
               onTap: () async {
                 Navigator.pop(context);
-                await _requestPermission(ImageSource.camera);
+                final hasPermission = await _requestPermission(
+                  ImageSource.camera,
+                );
+                if (!hasPermission) return;
+                if (!mounted) return;
                 await _pickImage(ImageSource.camera);
               },
             ),
@@ -161,7 +178,11 @@ class _ScanScreenState extends State<ScanScreen> {
               title: const Text('Pilih dari Galeri'),
               onTap: () async {
                 Navigator.pop(context);
-                await _requestPermission(ImageSource.gallery);
+                final hasPermission = await _requestPermission(
+                  ImageSource.gallery,
+                );
+                if (!hasPermission) return;
+                if (!mounted) return;
                 await _pickImage(ImageSource.gallery);
               },
             ),
@@ -203,13 +224,14 @@ class _ScanScreenState extends State<ScanScreen> {
           'Tidak diketahui';
 
       final aiWarning = result['ai_warning']?.toString();
-      final index = _getResultIndex(hasil);
+    final index = _getResultIndex(hasil);
       final diseaseKey = _resolveDiseaseKey(hasil);
+      final detectedImage = _scanBloc.state.image;
 
       if (!mounted) return;
 
       setState(() {
-        _lastDetectionImage = _scanBloc.state.image;
+        _lastDetectionImage = detectedImage;
         _lastDetectionResult = {
           ...aiPrediction,
           'hasil': hasil,
@@ -217,6 +239,9 @@ class _ScanScreenState extends State<ScanScreen> {
           'disease_key': diseaseKey,
         };
         _lastDetectionWarning = aiWarning;
+        _scanBloc.setImage(null);
+        _scanBloc.setSelectedLahanId(null);
+        _catatanController.clear();
       });
 
       _showSnackBar(
@@ -225,12 +250,7 @@ class _ScanScreenState extends State<ScanScreen> {
             : 'Deteksi tersimpan, namun AI offline. Hasil sementara: $hasil',
         isError: aiWarning != null && aiWarning.isNotEmpty,
       );
-      // Reset form
-      setState(() {
-        _scanBloc.setImage(null);
-        _scanBloc.setSelectedLahanId(null);
-        _catatanController.clear();
-      });
+      await widget.onDetectionCompleted?.call();
     } catch (e) {
       if (!mounted) return;
       _showSnackBar(e.toString().replaceAll('Exception: ', ''), isError: true);

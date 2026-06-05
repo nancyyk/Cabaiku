@@ -1,5 +1,7 @@
 import 'dart:io';
 
+const Object _unset = Object();
+
 class ScanState {
   final int? selectedLahanId;
   final File? image;
@@ -12,13 +14,15 @@ class ScanState {
   });
 
   ScanState copyWith({
-    int? selectedLahanId,
-    File? image,
+    Object? selectedLahanId = _unset,
+    Object? image = _unset,
     bool? isLoadingLahan,
   }) {
     return ScanState(
-      selectedLahanId: selectedLahanId ?? this.selectedLahanId,
-      image: image ?? this.image,
+      selectedLahanId: selectedLahanId == _unset
+          ? this.selectedLahanId
+          : selectedLahanId as int?,
+      image: image == _unset ? this.image : image as File?,
       isLoadingLahan: isLoadingLahan ?? this.isLoadingLahan,
     );
   }

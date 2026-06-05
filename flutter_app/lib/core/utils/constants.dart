@@ -10,10 +10,13 @@ const double fieldSpacing = 16.0;
 // Contoh: http://localhost:8000/api (untuk development mode)
 // Contoh: https://api.cabaiku.com/api (untuk production)
 // const String apiBaseUrl = 'http://192.168.188.1:8001/api';
-const String apiBaseUrl = 'http://172.25.48.1:8001/api';
+const String apiBaseUrl = 'http://15.134.88.187/api';
 // Untuk Android emulator: localhost biasanya perlu 10.0.2.2
 // Untuk device fisik: gunakan IP laptop/server di jaringan yang sama.
-const String aiServiceBaseUrl = 'http://172.25.48.1:5000';
+const String aiServiceBaseUrl = 'http://15.134.88.187:5000';
+
+// Endpoint tips/artikel dari Laravel.
+const String tipsArticleEndpointPath = '/tips';
 
 const int apiTimeout = 30; // seconds
 // Local Storage Keys
